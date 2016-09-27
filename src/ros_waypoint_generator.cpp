@@ -57,6 +57,8 @@ public:
     odom_sub_ = nh_.subscribe<geometry_msgs::PoseWithCovarianceStamped>("/amcl_pose",
                               1,
                               &WaypointGenerator::addWaypoint, this);
+    waypoint_box_count_ = 0;
+    server.reset( new interactive_markers::InteractiveMarkerServer("cube") );
   }
   
   double calculateDistance(geometry_msgs::PoseWithCovariance new_pose)
