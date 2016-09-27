@@ -95,7 +95,11 @@ public:
     marker.scale.x = msg.scale;
     marker.scale.y = msg.scale;
     marker.scale.z = msg.scale;
-
+    marker.color.r = 0.05;
+    marker.color.g = 0.80;
+    marker.color.b = 0.02;
+    marker.color.a = 1.0;
+    
     control.markers.push_back(marker);
     msg.controls.push_back(control);
 
