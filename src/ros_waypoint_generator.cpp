@@ -111,7 +111,7 @@ public:
   void makeWaypointMarker(const geometry_msgs::PoseWithCovariance new_pose)
   {
     InteractiveMarker int_marker;
-    int_marker.header.frame_id = "/map";
+    int_marker.header.frame_id = "map";
     int_marker.pose = new_pose.pose;
     int_marker.scale = 1;
 
@@ -120,10 +120,10 @@ public:
     int_marker.name = s.str();
 
     makeWaypointMarkerControl(int_marker);
-
+    
     server->insert(int_marker);
     server->setCallback(int_marker.name, &processFeedback);
-
+    server->applyChanges();
     waypoint_box_count_++;
   }
   
