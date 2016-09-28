@@ -85,22 +85,36 @@ public:
   InteractiveMarkerControl& makeWaypointMarkerControl(InteractiveMarker &msg)
   {
     InteractiveMarkerControl control;
-    control.always_visible = true;
-    control.orientation_mode = InteractiveMarkerControl::VIEW_FACING;
+ 
+    // control.orientation_mode = InteractiveMarkerControl::VIEW_FACING;
+    // control.interaction_mode = InteractiveMarkerControl::MOVE_ROTATE;
+    //control.independent_marker_orientation = true;
+    control.orientation.w = 1;
+    control.orientation.x = 0;
+    control.orientation.y = 1;
+    control.orientation.z = 0;
     control.interaction_mode = InteractiveMarkerControl::MOVE_ROTATE;
+    msg.controls.push_back(control);
     control.independent_marker_orientation = true;
-
+    control.orientation.w = 1;
+    control.orientation.x = 0;
+    control.orientation.y = 1;
+    control.orientation.z = 0;
+    control.interaction_mode = InteractiveMarkerControl::MOVE_PLANE;
+    msg.controls.push_back(control);
+    
     Marker marker;
     marker.type = Marker::CUBE;
-    marker.scale.x = msg.scale;
-    marker.scale.y = msg.scale;
-    marker.scale.z = msg.scale;
+    marker.scale.x = msg.scale*0.5;
+    marker.scale.y = msg.scale*0.5;
+    marker.scale.z = msg.scale*0.5;
     marker.color.r = 0.05;
     marker.color.g = 0.80;
     marker.color.b = 0.02;
     marker.color.a = 1.0;
     
     control.markers.push_back(marker);
+    control.always_visible = true;
     msg.controls.push_back(control);
 
     return msg.controls.back();
@@ -118,6 +132,7 @@ public:
     std::stringstream s;
     s << waypoint_box_count_;
     int_marker.name = s.str();
+    int_marker.description = s.str();
 
     makeWaypointMarkerControl(int_marker);
     
