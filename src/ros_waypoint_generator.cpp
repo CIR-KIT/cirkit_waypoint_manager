@@ -10,10 +10,18 @@
 #include <tf/tf.h>
 
 #include <math.h>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <boost/tokenizer.hpp>
+#include <boost/shared_array.hpp>
+#include <boost/program_options.hpp>
 
 using namespace visualization_msgs;
 
 
+typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 boost::shared_ptr<interactive_markers::InteractiveMarkerServer> server;
 
 void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
@@ -65,7 +73,7 @@ public:
   {
     const int rows_num = 7; // x, y, z, Qx, Qy, Qz, Qw
     boost::char_separator<char> sep("," ,"", boost::keep_empty_tokens);
-    std::ifstream ifs(savefilename.c_str());
+    std::ifstream ifs(waypoint_file.c_str());
     std::string line;
 
     while(ifs.good()){
@@ -89,8 +97,11 @@ public:
         new_pose.pose.position.x = data[0];
         new_pose.pose.position.y = data[1];
         new_pose.pose.position.z = data[2];
-        new_pose.orientation = tf::Quaternion(data[3], data[4], data[5], data[6]);
-        makeWayPointMarker(new_pose);
+        new_pose.pose.orientation.x = data[3];
+        new_pose.pose.orientation.y = data[4];
+        new_pose.pose.orientation.z = data[5];
+        new_pose.pose.orientation.w = data[6];
+        makeWaypointMarker(new_pose);
       }
     }
   }

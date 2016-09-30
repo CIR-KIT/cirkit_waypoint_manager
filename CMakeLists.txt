@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   visualization_msgs
 )
 
+find_package(Boost 1.4 COMPONENTS program_options REQUIRED)
 
 catkin_package(
   CATKIN_DEPENDS roscpp interactive_markers visualization_msgs tf 
@@ -20,8 +21,9 @@ catkin_package(
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
 )
 
 ## Declare a C++ executable
 add_executable(ros_waypoint_generator src/ros_waypoint_generator.cpp)
-target_link_libraries(ros_waypoint_generator ${catkin_LIBRARIES})
+target_link_libraries(ros_waypoint_generator ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
