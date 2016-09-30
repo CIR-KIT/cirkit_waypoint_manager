@@ -43,8 +43,7 @@ public:
     size_t size = all_markers.markers.size();
     for(unsigned int i = 0; i < size; i++){
       //３次元の位置の指定
-      savefile << all_markers.markers[i].name << ","
-               << all_markers.markers[i].pose.position.x << ","
+      savefile << all_markers.markers[i].pose.position.x << ","
                << all_markers.markers[i].pose.position.y << ","
                << 0 << ","
                << all_markers.markers[i].pose.orientation.x << ","
