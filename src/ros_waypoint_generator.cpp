@@ -206,7 +206,7 @@ private:
 
   double dist_th_;
   double yaw_th_;
-  int waypoint_box_count_;
+  int waypoint_box_count_;;
 };
 
 

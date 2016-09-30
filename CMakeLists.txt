@@ -24,6 +24,11 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
 )
 
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
 ## Declare a C++ executable
 add_executable(ros_waypoint_generator src/ros_waypoint_generator.cpp)
 target_link_libraries(ros_waypoint_generator ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
+
+add_executable(ros_waypoint_saver src/ros_waypoint_saver.cpp)
+target_link_libraries(ros_waypoint_saver ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
