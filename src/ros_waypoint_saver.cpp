@@ -43,13 +43,18 @@ public:
     size_t size = all_markers.markers.size();
     for(unsigned int i = 0; i < size; i++){
       //３次元の位置の指定
+      int is_searching_area = 0;
+      if (all_markers.markers[i].controls[2].markers[0].color.r > 1.0) {
+        is_searching_area = 1;
+      }
       savefile << all_markers.markers[i].pose.position.x << ","
                << all_markers.markers[i].pose.position.y << ","
                << 0 << ","
                << all_markers.markers[i].pose.orientation.x << ","
                << all_markers.markers[i].pose.orientation.y << ","
                << all_markers.markers[i].pose.orientation.z << ","
-               << all_markers.markers[i].pose.orientation.w << std::endl;
+               << all_markers.markers[i].pose.orientation.w << ","
+               << is_searching_area << std::endl;
     }
     saved_waypoints_ = true;
   }

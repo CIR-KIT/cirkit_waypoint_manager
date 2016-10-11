@@ -71,7 +71,7 @@ public:
 
   void load(std::string waypoint_file)
   {
-    const int rows_num = 7; // x, y, z, Qx, Qy, Qz, Qw
+    const int rows_num = 8; // x, y, z, Qx, Qy, Qz, Qw, is_searching_area
     boost::char_separator<char> sep("," ,"", boost::keep_empty_tokens);
     std::ifstream ifs(waypoint_file.c_str());
     std::string line;
@@ -101,7 +101,7 @@ public:
         new_pose.pose.orientation.y = data[4];
         new_pose.pose.orientation.z = data[5];
         new_pose.pose.orientation.w = data[6];
-        makeWaypointMarker(new_pose);
+        makeWaypointMarker(new_pose, (int)data[7]);
       }
     }
   }
@@ -127,7 +127,8 @@ public:
     return fabs(yaw - last_yaw);
   }
 
-  InteractiveMarkerControl& makeWaypointMarkerControl(InteractiveMarker &msg)
+  InteractiveMarkerControl& makeWaypointMarkerControl(InteractiveMarker &msg,
+                                                      int is_searching_area)
   {
     InteractiveMarkerControl control;
     control.orientation.w = 1;
@@ -149,7 +150,7 @@ public:
     marker.scale.x = msg.scale*0.5;
     marker.scale.y = msg.scale*0.5;
     marker.scale.z = msg.scale*0.5;
-    marker.color.r = 0.05;
+    marker.color.r = 0.05 + 1.0*(float)is_searching_area;
     marker.color.g = 0.80;
     marker.color.b = 0.02;
     marker.color.a = 1.0;
@@ -162,7 +163,8 @@ public:
 
   }
 
-  void makeWaypointMarker(const geometry_msgs::PoseWithCovariance new_pose)
+  void makeWaypointMarker(const geometry_msgs::PoseWithCovariance new_pose,
+                          int is_searching_area)
   {
     InteractiveMarker int_marker;
     int_marker.header.frame_id = "map";
@@ -174,7 +176,7 @@ public:
     int_marker.name = s.str();
     int_marker.description = s.str();
 
-    makeWaypointMarkerControl(int_marker);
+    makeWaypointMarkerControl(int_marker, is_searching_area);
 
     server->insert(int_marker);
     server->setCallback(int_marker.name, &processFeedback);
@@ -188,7 +190,7 @@ public:
     double diff_yaw = calculateAngle(amcl_pose->pose);
     if(diff_dist > dist_th_ || diff_yaw > yaw_th_)
     {
-      makeWaypointMarker(amcl_pose->pose);
+      makeWaypointMarker(amcl_pose->pose, 0);
       last_pose_ = amcl_pose->pose;
     }
   }
