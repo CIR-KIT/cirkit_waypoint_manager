@@ -19,12 +19,17 @@ $ rosrun ros_waypoint_generator ros_waypoint_generator --load path/to/point.csv
 ```
 The waypoint file format is below.
 ```
-x, y, z, qz, qy, qz, qw
+x, y, z, qx, qy, qz, qw, is_searching_area
 ```
 #### save waypoint
 ```bash
 $ rosrun ros_waypoint_generator ros_waypoint_saver
 ```
+
+### modify_waypoint
+If the waypoint area is searching area, the you can make last colum `1`.  
+If you set it correct, the marker color will be yellow.  
+The normal color is green.  
 
 ### parameters
 - `dist_th` : threshold of distance for adding new waypoint
