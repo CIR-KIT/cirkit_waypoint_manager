@@ -17,11 +17,24 @@
 #include <boost/tokenizer.hpp>
 #include <boost/shared_array.hpp>
 #include <boost/program_options.hpp>
+#include <boost/date_time.hpp>
 
 bool compareInteractiveMarker(visualization_msgs::InteractiveMarker left,
                               visualization_msgs::InteractiveMarker right)
 {
   return std::stoi(left.name) < std::stoi(right.name);
+}
+
+std::string timeToStr()
+{
+    std::stringstream msg;
+    const boost::posix_time::ptime now=
+        boost::posix_time::second_clock::local_time();
+    boost::posix_time::time_facet *const f=
+        new boost::posix_time::time_facet("%Y-%m-%d-%H-%M-%S");
+    msg.imbue(std::locale(msg.getloc(),f));
+    msg << now;
+    return msg.str();
 }
 
 class WaypointSaver
@@ -67,8 +80,8 @@ public:
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "waypoint_saver");
-  std::string waypoints_name = "points.csv";
-
+  std::string waypoints_name = timeToStr() + ".csv";
+  ROS_INFO_STREAM("Saved to : " << waypoints_name);
   WaypointSaver saver(waypoints_name);
   while(!saver.saved_waypoints_ && ros::ok())
   {
