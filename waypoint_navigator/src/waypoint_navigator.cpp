@@ -7,8 +7,12 @@ read_csv.cpp : https://gist.github.com/yoneken/5765597#file-read_csv-cpp
 
 #include <ros/ros.h>
 #include <ros/package.h>
+#include <tf/transform_listener.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
+#include <geometry_msgs/Pose.h>
+#include <jsk_recognition_msgs/BoundingBox.h>
+#include <jsk_recognition_msgs/BoundingBoxArray.h>
 
 #include <iostream>
 #include <string>
