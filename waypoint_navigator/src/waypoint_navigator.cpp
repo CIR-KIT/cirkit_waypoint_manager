@@ -38,15 +38,27 @@ enum State
   };
 }
 
-#define NAVIGATING		0
-#define NEARGOAL		1
-#define INITNAVI		2
-
-
-double calculateDistance(double target_x, double target_y , double now_x, double now_y) 
+class WayPoint
 {
-  return  sqrt(pow((target_x - now_x), 2.0) + pow((target_y - now_y), 2.0));
-}
+public:
+  WayPoint();
+  WayPoint(move_base_msgs::MoveBaseGoal goal, int area_type, double reach_threshold)
+    : goal_(goal), area_type_(area_type), reach_threshold_(reach_threshold_)
+  {
+  }
+  ~WayPoint(){}
+  bool isSearchArea()
+  {
+    if (area_type_ == 1) {
+      return true;
+    }else{
+      return false;
+    }
+  }
+  move_base_msgs::MoveBaseGoal goal_;
+  int area_type_;
+  double reach_threshold_;
+};
 
 
 class WaypointNavigator
