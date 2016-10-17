@@ -19,7 +19,7 @@ $ rosrun ros_waypoint_generator ros_waypoint_generator --load path/to/point.csv
 ```
 The waypoint file format is below.
 ```
-x, y, z, qx, qy, qz, qw, is_searching_area
+x, y, z, qx, qy, qz, qw, is_searching_area, reach_threshold
 ```
 #### save waypoint
 ```bash
