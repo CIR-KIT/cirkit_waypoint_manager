@@ -73,7 +73,7 @@ public:
     ros::NodeHandle n("~");
     n.param<std::string>("waypointsfile", filename,
                          ros::package::getPath("waypoint_navigator")
-                         + "/waypoints/default.csv");
+                         + "/waypoints/garden_waypoints.csv");
 
     n.param("dist_thres_to_target_object", dist_thres_to_target_object_, 1.5);
     ROS_INFO("[Waypoints file name] : %s", filename.c_str());
