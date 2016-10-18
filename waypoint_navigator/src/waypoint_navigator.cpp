@@ -43,7 +43,7 @@ class WayPoint
 public:
   WayPoint();
   WayPoint(move_base_msgs::MoveBaseGoal goal, int area_type, double reach_threshold)
-    : goal_(goal), area_type_(area_type), reach_threshold_(reach_threshold_)
+    : goal_(goal), area_type_(area_type), reach_threshold_(reach_threshold)
   {
   }
   ~WayPoint(){}
@@ -130,7 +130,7 @@ public:
         waypoint.target_pose.pose.orientation.y = data[4];
         waypoint.target_pose.pose.orientation.z = data[5];
         waypoint.target_pose.pose.orientation.w = data[6];
-        waypoints_.push_back(WayPoint(waypoint, (int)data[7], data[8]));
+        waypoints_.push_back(WayPoint(waypoint, (int)data[7], data[8]/2.0));
       }
     }
     return 0;
@@ -150,7 +150,7 @@ public:
 
   bool isFinalGoal()
   {
-    if (target_waypoint_index_ == (int)waypoints_.size()) {
+    if ((target_waypoint_index_-1) == ((int)waypoints_.size())) {
       return true;
     }else{
       return false;
@@ -224,6 +224,7 @@ public:
     robot_behavior_state_ = RobotBehaviors::INIT_NAV;
     while(ros::ok()){
       WayPoint next_waypoint = this->getNextWaypoint();
+      ROS_INFO("Next WayPoint is got");
       if (next_waypoint.isSearchArea()) { // 次のwaypointが探索エリアがどうか判定
         if(target_objects_.boxes.size() > 0){ // 探索対象が見つかっているか
           for (int i = 0; i < target_objects_.boxes.size(); ++i) {
@@ -235,20 +236,24 @@ public:
           }
         }else // 探索エリアだが探索対象がいない
         {
+          ROS_INFO("Searching area but there are not target objects.");
           this->setNextGoal(next_waypoint);
           robot_behavior_state_ = RobotBehaviors::WAYPOINT_NAV;
         }
       }else // 探索エリアではない
       {
+        ROS_INFO("Go next_waypoint.");
         this->setNextGoal(next_waypoint);
         robot_behavior_state_ = RobotBehaviors::WAYPOINT_NAV;
       }
-      while(1)
+      while(ros::ok())
       {
         geometry_msgs::Pose robot_current_position = this->getRobotCurrentPosition(); // 現在のロボットの座標
         geometry_msgs::Pose now_goal_position = this->getNowGoalPosition(); // 現在目指している座標
         double distance_to_goal = this->calculateDistance(robot_current_position,
                                                           now_goal_position);
+        // ROS_INFO_STREAM("dist : " << distance_to_goal);
+        // ROS_INFO_STREAM("thres: " << this->getReachThreshold());
         // ここでスタック判定してもいいかもしれない。
         // 一定時間進んでない、もしくは一定回数後も移動距離が変化していないなら
         // ゴールをキャンセルして次のwaypointに進むとか？
@@ -261,6 +266,7 @@ public:
         ros::spinOnce();
       }
       if (robot_behavior_state_ == RobotBehaviors::REACHED_GOAL) { //waypointか探索対象に到達してて
+        ROS_INFO("REACHED_GOAL");
         if (this->isFinalGoal()) { // そのwaypointが最後だったら
           this->cancelGoal(); // ゴールをキャンセルして終了
           return;
