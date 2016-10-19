@@ -39,6 +39,7 @@ public:
     odom_sub_ = nh_.subscribe<geometry_msgs::PoseWithCovarianceStamped>("/amcl_pose",
                               1,
                               &WaypointGenerator::addWaypoint, this);
+    clicked_sub_ = nh_.subscribe("clicked_point", 1, &WaypointGenerator::clickedPointCallback, this);
     reach_marker_pub_ = nh_.advertise<visualization_msgs::MarkerArray>("/reach_threshold_markers", 1);
     waypoint_box_count_ = 0;
     server.reset( new interactive_markers::InteractiveMarkerServer("cube") );
@@ -223,8 +224,18 @@ public:
   {
     ROS_INFO_STREAM("publishReachMarker");
     reach_marker_pub_.publish(reach_threshold_markers_);
+    server->applyChanges();
   }
-  
+
+  void clickedPointCallback(const geometry_msgs::PointStamped &point)
+  {
+    geometry_msgs::PoseWithCovariance pose;
+    tf::pointTFToMsg(tf::Vector3( point.point.x, point.point.y, 0), pose.pose.position);
+    tf::quaternionTFToMsg(tf::createQuaternionFromRPY(0, 0, 0), pose.pose.orientation);
+    makeWaypointMarker(pose, 0, 3.0);
+    server->applyChanges();
+  }
+
   void run()
   {
     ros::Timer frame_timer = nh_.createTimer(ros::Duration(0.1), boost::bind(&WaypointGenerator::publishReachMarkerCallback, this, _1));
@@ -238,6 +249,7 @@ private:
   ros::NodeHandle nh_;
   ros::Rate rate_;
   ros::Subscriber odom_sub_;
+  ros::Subscriber clicked_sub_;
   ros::Publisher reach_marker_pub_;
   geometry_msgs::PoseWithCovariance last_pose_;
 
