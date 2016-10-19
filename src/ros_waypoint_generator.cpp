@@ -19,6 +19,8 @@
 #include <boost/shared_array.hpp>
 #include <boost/program_options.hpp>
 
+#include <ros_waypoint_generator/WaypointArray.h>
+
 using namespace visualization_msgs;
 
 
@@ -41,6 +43,7 @@ public:
                               &WaypointGenerator::addWaypoint, this);
     clicked_sub_ = nh_.subscribe("clicked_point", 1, &WaypointGenerator::clickedPointCallback, this);
     reach_marker_pub_ = nh_.advertise<visualization_msgs::MarkerArray>("/reach_threshold_markers", 1);
+    waypoints_pub_ = nh_.advertise<ros_waypoint_generator::WaypointArray>("/waypoints", 1);
     waypoint_box_count_ = 0;
     server.reset( new interactive_markers::InteractiveMarkerServer("cube") );
   }
@@ -111,9 +114,12 @@ public:
     control.orientation.x = 0;
     control.orientation.y = 1;
     control.orientation.z = 0;
-    control.interaction_mode = InteractiveMarkerControl::MOVE_ROTATE;
+    control.name = "rotate_z";
+    control.interaction_mode = InteractiveMarkerControl::ROTATE_AXIS;
     msg.controls.push_back(control);
-    control.independent_marker_orientation = true;
+    // control.interaction_mode = InteractiveMarkerControl::MOVE_ROTATE;
+    // msg.controls.push_back(control);
+    // control.independent_marker_orientation = true;
     control.orientation.w = 1;
     control.orientation.x = 0;
     control.orientation.y = 1;
@@ -152,19 +158,7 @@ public:
           reach_threshold_markers_.markers[std::stoi(feedback->marker_name)].pose
             = feedback->pose;
           reach_marker_pub_.publish(reach_threshold_markers_);
-          ROS_INFO_STREAM( s.str() << ": pose changed"
-                           << "\nposition = "
-                           << feedback->pose.position.x
-                           << ", " << feedback->pose.position.y
-                           << ", " << feedback->pose.position.z
-                           << "\norientation = "
-                           << feedback->pose.orientation.x
-                           << ", " << feedback->pose.orientation.y
-                           << ", " << feedback->pose.orientation.z
-                           << ", " << feedback->pose.orientation.w
-                           << "\nframe: " << feedback->header.frame_id
-                           << " time: " << feedback->header.stamp.sec << "sec, "
-                           << feedback->header.stamp.nsec << " nsec" );
+          waypoints_.waypoints[std::stoi(feedback->marker_name)].pose = feedback->pose;
           break;
         }
     }
@@ -206,6 +200,14 @@ public:
     server->insert(int_marker);
     server->setCallback(int_marker.name, boost::bind(&WaypointGenerator::processFeedback, this, _1));
     server->applyChanges();
+
+    ros_waypoint_generator::Waypoint waypoint;
+    waypoint.number = waypoint_box_count_;
+    waypoint.pose = new_pose.pose;
+    waypoint.is_search_area = is_searching_area;
+    waypoint.reach_tolerance = reach_threshold/2.0;
+    waypoints_.waypoints.push_back(waypoint);
+    
     waypoint_box_count_++;
   }
 
@@ -220,10 +222,10 @@ public:
     }
   }
 
-  void publishReachMarkerCallback(const ros::TimerEvent&)
+  void publishWaypointCallback(const ros::TimerEvent&)
   {
-    ROS_INFO_STREAM("publishReachMarker");
     reach_marker_pub_.publish(reach_threshold_markers_);
+    waypoints_pub_.publish(waypoints_);
     server->applyChanges();
   }
 
@@ -235,10 +237,30 @@ public:
     makeWaypointMarker(pose, 0, 3.0);
     server->applyChanges();
   }
+  
+  void tfSendTransformCallback(const ros::TimerEvent&)
+  {  
+    tf::Transform t;
+    ros::Time time = ros::Time::now();
 
+    for (size_t i = 0; i < waypoints_.waypoints.size(); ++i) {
+      std::stringstream s;
+      s << waypoints_.waypoints[i].number;
+      t.setOrigin(tf::Vector3(waypoints_.waypoints[i].pose.position.x,
+                              waypoints_.waypoints[i].pose.position.y,
+                              waypoints_.waypoints[i].pose.position.z));
+      t.setRotation(tf::Quaternion(waypoints_.waypoints[i].pose.orientation.x,
+                                   waypoints_.waypoints[i].pose.orientation.y,
+                                   waypoints_.waypoints[i].pose.orientation.z,
+                                   waypoints_.waypoints[i].pose.orientation.w));
+      br_.sendTransform(tf::StampedTransform(t, time, "map", s.str()));
+    }
+  }
+  
   void run()
   {
-    ros::Timer frame_timer = nh_.createTimer(ros::Duration(0.1), boost::bind(&WaypointGenerator::publishReachMarkerCallback, this, _1));
+    ros::Timer frame_timer = nh_.createTimer(ros::Duration(0.1), boost::bind(&WaypointGenerator::publishWaypointCallback, this, _1));
+    ros::Timer tf_frame_timer = nh_.createTimer(ros::Duration(0.1), boost::bind(&WaypointGenerator::tfSendTransformCallback, this, _1));
     while(ros::ok())
     {
       ros::spinOnce();
@@ -251,13 +273,15 @@ private:
   ros::Subscriber odom_sub_;
   ros::Subscriber clicked_sub_;
   ros::Publisher reach_marker_pub_;
+  ros::Publisher waypoints_pub_;
   geometry_msgs::PoseWithCovariance last_pose_;
-
+  ros_waypoint_generator::WaypointArray waypoints_;
   double dist_th_;
   double yaw_th_;
   int waypoint_box_count_;
   std::vector<double> reach_thresholds_;
   visualization_msgs::MarkerArray reach_threshold_markers_;
+  tf::TransformBroadcaster br_;
 };
 
 

@@ -20,6 +20,8 @@
 #include <boost/program_options.hpp>
 #include <boost/date_time.hpp>
 
+#include <ros_waypoint_generator/WaypointArray.h>
+
 bool compareInteractiveMarker(visualization_msgs::InteractiveMarker left,
                               visualization_msgs::InteractiveMarker right)
 {
@@ -46,58 +48,37 @@ public:
   {
     ros::NodeHandle n;
     
-    waypoints_sub_ = n.subscribe("/cube/update_full", 1, &WaypointSaver::pointsCallback, this);
-    reached_markers_sub_ = n.subscribe("/reach_threshold_markers", 1, &WaypointSaver::reachedMarkerCallback, this);
-    is_reached_markers_ = false;
+    waypoints_sub_ = n.subscribe("/waypoints", 1, &WaypointSaver::waypointsCallback, this);
+    ROS_INFO("Waiting for waypoints");
   }
 
-  void pointsCallback(visualization_msgs::InteractiveMarkerInit all_markers)
+  void waypointsCallback(ros_waypoint_generator::WaypointArray waypoints)
   {
-    ROS_INFO("Waiting for reach_markers");
-    if (! is_reached_markers_) {
-      return;
-    }
-    ROS_INFO("Received markers : %d", (int)all_markers.markers.size());
-    if(all_markers.markers.size() != reached_markers_.markers.size())
-    {
-      ROS_ERROR("markers size is mismatch!!!");
-    }
+    ROS_INFO("Received waypoints : %d", (int)waypoints.waypoints.size());
+
     std::ofstream savefile(waypoints_file_.c_str(), std::ios::out);
-    std::sort(all_markers.markers.begin(), all_markers.markers.end(), compareInteractiveMarker);
-    size_t size = all_markers.markers.size();
+    //std::sort(all_markers.markers.begin(), all_markers.markers.end(), compareInteractiveMarker);
+    size_t size = waypoints.waypoints.size();
     for(unsigned int i = 0; i < size; i++){
       //３次元の位置の指定
-      int is_searching_area = 0;
-      if (all_markers.markers[i].controls[2].markers[0].color.r > 1.0) {
-        is_searching_area = 1;
-      }
-      savefile << all_markers.markers[i].pose.position.x << ","
-               << all_markers.markers[i].pose.position.y << ","
+      savefile << waypoints.waypoints[i].pose.position.x << ","
+               << waypoints.waypoints[i].pose.position.y << ","
                << 0 << ","
-               << all_markers.markers[i].pose.orientation.x << ","
-               << all_markers.markers[i].pose.orientation.y << ","
-               << all_markers.markers[i].pose.orientation.z << ","
-               << all_markers.markers[i].pose.orientation.w << ","
-               << is_searching_area << ","
-               << 2.0*reached_markers_.markers[i].scale.x << std::endl;
+               << waypoints.waypoints[i].pose.orientation.x << ","
+               << waypoints.waypoints[i].pose.orientation.y << ","
+               << waypoints.waypoints[i].pose.orientation.z << ","
+               << waypoints.waypoints[i].pose.orientation.w << ","
+               << waypoints.waypoints[i].is_search_area << ","
+               << waypoints.waypoints[i].reach_tolerance * 2.0 << std::endl;
+      ROS_INFO_STREAM("Num: " << waypoints.waypoints[i].number);
     }
     saved_waypoints_ = true;
     ROS_INFO_STREAM("Saved to : " << waypoints_file_);
-  }
-
-  void reachedMarkerCallback(visualization_msgs::MarkerArray reached_markers)
-  {
-    ROS_INFO("Received Reach threshold markers : %d", (int)reached_markers.markers.size());
-    reached_markers_ = reached_markers;
-    is_reached_markers_ = true;
   }
   
   std::string waypoints_file_;
   ros::Subscriber waypoints_sub_;
   bool saved_waypoints_;
-  bool is_reached_markers_;
-  ros::Subscriber reached_markers_sub_;
-  visualization_msgs::MarkerArray reached_markers_;
 };
 
 int main(int argc, char** argv)
