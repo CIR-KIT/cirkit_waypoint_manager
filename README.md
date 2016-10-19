@@ -3,6 +3,10 @@ This package generate waypoints for 2D navigation by using /map and /odom
 
 ## How to use
 
+`amcl`を走らせながらこれを起動しておくか、rvizのクリックでも追加できるよ。  
+`rviz`で`tf`を表示させて`scale`を10くらいにしておくとwaypointの姿勢もわかるよ。  
+箱の周りの輪っかで姿勢を変えられるけど上手く行かないことがある（バグ？）ので拡大したりしながら根気よくやろう。  
+
 ### required
 - /amcl_pose
 
