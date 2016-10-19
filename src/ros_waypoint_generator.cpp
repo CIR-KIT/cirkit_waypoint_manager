@@ -50,7 +50,6 @@ public:
     boost::char_separator<char> sep("," ,"", boost::keep_empty_tokens);
     std::ifstream ifs(waypoint_file.c_str());
     std::string line;
-
     while(ifs.good()){
       getline(ifs, line);
       if(line.empty()){ break; }
@@ -79,6 +78,7 @@ public:
         makeWaypointMarker(new_pose, (int)data[7], data[8]);
       }
     }
+    ROS_INFO_STREAM(waypoint_box_count_ << "waypoints are loaded.");
   }
 
   double calculateDistance(geometry_msgs::PoseWithCovariance new_pose)
@@ -221,6 +221,7 @@ public:
 
   void publishReachMarkerCallback(const ros::TimerEvent&)
   {
+    ROS_INFO_STREAM("publishReachMarker");
     reach_marker_pub_.publish(reach_threshold_markers_);
   }
   
