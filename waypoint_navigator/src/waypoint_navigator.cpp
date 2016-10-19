@@ -87,7 +87,10 @@ public:
     ROS_INFO("Waiting for action server to start.");
     ac_.waitForServer();
   }
-
+  ~WaypointNavigator()
+  {
+    this->cancelGoal();
+  }
   void sendNewGoal(geometry_msgs::Pose pose)
   {
     move_base_msgs::MoveBaseGoal goal;
@@ -147,6 +150,7 @@ public:
 
   WayPoint getNextWaypoint()
   {
+    ROS_INFO_STREAM("Next Waypoint : " << target_waypoint_index_);
     WayPoint next_waypoint = waypoints_[target_waypoint_index_];
     target_waypoint_index_++;
     return next_waypoint;
@@ -175,8 +179,8 @@ public:
 
   double calculateDistance(geometry_msgs::Pose a,geometry_msgs::Pose b)
   {
-     sqrt(pow((a.position.x - b.position.x), 2.0) +
-          pow((a.position.y - b.position.y), 2.0));
+    return sqrt(pow((a.position.x - b.position.x), 2.0) +
+                pow((a.position.y - b.position.y), 2.0));
   }
 
   // 探索対象へのアプローチの場合
@@ -214,12 +218,13 @@ public:
     }
     pose.position.x = transform.getOrigin().x();
     pose.position.y = transform.getOrigin().y();
-    
+    //ROS_INFO_STREAM("c)x :" << pose.position.x << ", y :" << pose.position.y);
     return pose;
   }
 
   geometry_msgs::Pose getNowGoalPosition()
   {
+    //ROS_INFO_STREAM("g)x :" << now_goal_.position.x << ", y :" << now_goal_.position.y);
     return now_goal_;
   }
 
@@ -332,6 +337,7 @@ public:
         // waypointの更新判定
         if(distance_to_goal < this->getReachThreshold()) // 目標座標までの距離がしきい値になれば
         {
+          ROS_INFO_STREAM("distance: " << distance_to_goal);
           robot_behavior_state_ = RobotBehaviors::REACHED_GOAL;
           break;
         }
@@ -350,7 +356,7 @@ public:
         case RobotBehaviors::PLANNING_ABORTED: {
           ROS_INFO("!! PLANNING_ABORTED !!");
           this->cancelGoal(); // 今のゴールをキャンセルして
-          this->tryBackRecovery(); // 1mくらい戻ってみて
+          //this->tryBackRecovery(); // 1mくらい戻ってみて
           target_waypoint_index_ -= 1; // waypoint indexを１つ戻す
           break;
         }  
