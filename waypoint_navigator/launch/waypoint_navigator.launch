@@ -4,6 +4,6 @@
     -->
     <!-- <param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/garden_waypoints.csv" /> -->
 
-    <param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/2016-10-19-23-00-05.csv" />
+    <param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/2016-10-20-12-47-54.csv" />
   </node>
 </launch>
