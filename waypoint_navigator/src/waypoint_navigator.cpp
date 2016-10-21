@@ -82,7 +82,7 @@ public:
 
     n.param("dist_thres_to_target_object", dist_thres_to_target_object_, 1.5);
     ROS_INFO("[Waypoints file name] : %s", filename.c_str());
-
+    detect_target_objects_sub_ = nh_.subscribe("/recognized_result", 1, &WaypointNavigator::detectTargetObjectCallback, this);
     ROS_INFO("Reading Waypoints.");
     readWaypoint(filename.c_str());
     ROS_INFO("Waiting for action server to start.");
@@ -299,10 +299,21 @@ public:
           ROS_INFO_STREAM("Found target objects : " << target_objects_.boxes.size());
           for (int i = 0; i < target_objects_.boxes.size(); ++i) {
             if (! this->isAlreadyApproachedToTargetObject(target_objects_.boxes[i])) { // 探索対象にまだアプローチしていなかったら
-              ROS_INFO_STREAM("Found new target objects.");
-              this->setNextGoal(target_objects_.boxes[i], dist_thres_to_target_object_); // 探索対象を次のゴールに設定
-              robot_behavior_state_ = RobotBehaviors::DETECT_TARGET_NAV;
-              break;
+              //今の位置から10[m]以内なら目指す
+              geometry_msgs::Pose robot_pose = this->getRobotCurrentPosition();
+              geometry_msgs::Pose target_pose(target_objects_.boxes[i].pose);
+              double distance_to_target = this->calculateDistance(robot_pose, target_pose);
+              if (distance_to_target < 15.0) {
+                ROS_INFO_STREAM("Found new target objects.");
+                this->setNextGoal(target_objects_.boxes[i], dist_thres_to_target_object_); // 探索対象を次のゴールに設定
+                robot_behavior_state_ = RobotBehaviors::DETECT_TARGET_NAV;
+                break;
+              }else // 探索対象が見つかったが遠すぎる
+              {
+                ROS_INFO_STREAM("Found new target object, but too far.");
+                this->setNextGoal(next_waypoint);
+                robot_behavior_state_ = RobotBehaviors::WAYPOINT_NAV;
+              }
             }
           }
         }else // 探索エリアだが探索対象がいない
@@ -347,6 +358,9 @@ public:
             break;
           }else if(robot_behavior_state_ == RobotBehaviors::DETECT_TARGET_NAV){
             robot_behavior_state_ = RobotBehaviors::DETECT_TARGET_REACHED_GOAL;
+            break;
+          }else{
+            break;
           }
         }
         rate_.sleep();
@@ -363,7 +377,8 @@ public:
         }
         case RobotBehaviors::DETECT_TARGET_REACHED_GOAL: {
           ROS_INFO("DETECT_TARGET_REACHED_GOAL");
-          ros::Duration(5.0).sleep(); // 探索対象を見つけたら5秒停止する
+          this->cancelGoal(); // 探索対象を見つけたらその場で停止して
+          ros::Duration(5.0).sleep(); // 5秒停止する
           // waypointを戻したりするべきかどうか
           break;
         }
@@ -374,8 +389,10 @@ public:
           target_waypoint_index_ -= 1; // waypoint indexを１つ戻す
           break;
         }  
-        default:
+        default:{
+          ROS_WARN_STREAM("!! UNKNOWN STATE !!");
           break;
+        }
       }
       rate_.sleep();
       ros::spinOnce();
@@ -395,6 +412,7 @@ private:
   double reach_threshold_; // 今セットされてるゴール（waypointもしくは探索対象）へのしきい値
   geometry_msgs::Pose now_goal_; // 現在目指しているゴールの座標
   ros::Subscriber laser_scan_sub_;
+  ros::Subscriber detect_target_objects_sub_;
   sensor_msgs::LaserScan scan_;
   laser_geometry::LaserProjection projector_;
   sensor_msgs::PointCloud cloud_;
