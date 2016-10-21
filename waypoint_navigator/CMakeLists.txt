@@ -10,13 +10,17 @@ find_package(catkin REQUIRED COMPONENTS
   move_base_msgs
   tf
   roslib
+  laser_geometry
 )
 
+find_package(PkgConfig)
+pkg_search_module(EIGEN REQUIRED eigen3)
+
 catkin_package(
-#  INCLUDE_DIRS include
+  # INCLUDE_DIRS include
+  # DEPENDS Eigen
 #  LIBRARIES waypoint_navigator
 #  CATKIN_DEPENDS roscpp
-#  DEPENDS system_lib
 )
 
 ###########
@@ -27,8 +31,9 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN_INCLUDE_DIRS}
 )
-
+link_directories(${EIGEN_LIBRARY_DIRS})
 ## Declare a C++ executable
 add_executable(waypoint_navigator_node src/waypoint_navigator.cpp)
 
