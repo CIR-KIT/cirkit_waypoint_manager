@@ -36,7 +36,8 @@ enum State
   {
     WAYPOINT_NAV,
     DETECT_TARGET_NAV,
-    REACHED_GOAL,
+    WAYPOINT_REACHED_GOAL,
+    DETECT_TARGET_REACHED_GOAL,
     INIT_NAV,
     PLANNING_ABORTED,
   };
@@ -293,9 +294,12 @@ public:
       WayPoint next_waypoint = this->getNextWaypoint();
       ROS_INFO("Next WayPoint is got");
       if (next_waypoint.isSearchArea()) { // 次のwaypointが探索エリアがどうか判定
+        ROS_INFO_STREAM("Now Search area.");
         if(target_objects_.boxes.size() > 0){ // 探索対象が見つかっているか
+          ROS_INFO_STREAM("Found target objects : " << target_objects_.boxes.size());
           for (int i = 0; i < target_objects_.boxes.size(); ++i) {
             if (! this->isAlreadyApproachedToTargetObject(target_objects_.boxes[i])) { // 探索対象にまだアプローチしていなかったら
+              ROS_INFO_STREAM("Found new target objects.");
               this->setNextGoal(target_objects_.boxes[i], dist_thres_to_target_object_); // 探索対象を次のゴールに設定
               robot_behavior_state_ = RobotBehaviors::DETECT_TARGET_NAV;
               break;
@@ -326,7 +330,7 @@ public:
         delta_distance_to_goal = last_distance_to_goal - distance_to_goal; // どれだけ進んだか
         if(delta_distance_to_goal < 0.1){ // 進んだ距離が0.1[m]より小さくて
           ros::Duration how_long_stay_time = ros::Time::now() - begin_navigation;
-          if (how_long_stay_time.toSec() > 60.0 ) { // 60秒間経過していたら
+          if (how_long_stay_time.toSec() > 180.0 ) { // 180秒間経過していたら
             robot_behavior_state_ = RobotBehaviors::PLANNING_ABORTED; // プランニング失敗とする
             break;
           }
@@ -337,20 +341,30 @@ public:
         // waypointの更新判定
         if(distance_to_goal < this->getReachThreshold()) // 目標座標までの距離がしきい値になれば
         {
-          ROS_INFO_STREAM("distance: " << distance_to_goal);
-          robot_behavior_state_ = RobotBehaviors::REACHED_GOAL;
-          break;
+          ROS_INFO_STREAM("Distance: " << distance_to_goal);
+          if(robot_behavior_state_ == RobotBehaviors::WAYPOINT_NAV){
+            robot_behavior_state_ = RobotBehaviors::WAYPOINT_REACHED_GOAL;
+            break;
+          }else if(robot_behavior_state_ == RobotBehaviors::DETECT_TARGET_NAV){
+            robot_behavior_state_ = RobotBehaviors::DETECT_TARGET_REACHED_GOAL;
+          }
         }
         rate_.sleep();
         ros::spinOnce();
       }
       switch (robot_behavior_state_) {
-        case RobotBehaviors::REACHED_GOAL: {
-          ROS_INFO("REACHED_GOAL");
+        case RobotBehaviors::WAYPOINT_REACHED_GOAL: {
+          ROS_INFO("WAYPOINT_REACHED_GOAL");
           if (this->isFinalGoal()) { // そのwaypointが最後だったら
             this->cancelGoal(); // ゴールをキャンセルして終了
             return;
           }
+          break;
+        }
+        case RobotBehaviors::DETECT_TARGET_REACHED_GOAL: {
+          ROS_INFO("DETECT_TARGET_REACHED_GOAL");
+          ros::Duration(5.0).sleep(); // 探索対象を見つけたら5秒停止する
+          // waypointを戻したりするべきかどうか
           break;
         }
         case RobotBehaviors::PLANNING_ABORTED: {
