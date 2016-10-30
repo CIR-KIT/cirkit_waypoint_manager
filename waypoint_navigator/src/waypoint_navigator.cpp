@@ -312,20 +312,21 @@ public:
     while(ros::ok()){
       bool is_set_next_as_target = false;
       WayPoint next_waypoint = this->getNextWaypoint();
-      ROS_INFO("Next WayPoint is got");
+      ROS_GREEN_STREAM("Next WayPoint is got");
       if (next_waypoint.isSearchArea()) { // 次のwaypointが探索エリアがどうか判定
         ROS_INFO_STREAM("Now Search area.");
         if(target_objects_.boxes.size() > 0){ // 探索対象が見つかっているか
           ROS_INFO_STREAM("Found target objects : " << target_objects_.boxes.size());
           for (int i = 0; i < target_objects_.boxes.size(); ++i) {
             if (! this->isAlreadyApproachedToTargetObject(target_objects_.boxes[i])) { // 探索対象にまだアプローチしていなかったら
-              //今の位置から15[m]以内なら目指す
+              //今の位置から5[m]以内なら目指す
               geometry_msgs::Pose robot_pose = this->getRobotCurrentPosition();
               geometry_msgs::Pose target_pose(target_objects_.boxes[i].pose);
               double distance_to_target = this->calculateDistance(robot_pose, target_pose);
-              if (distance_to_target < 15.0) {
-                ROS_INFO_STREAM("Found new target objects.");
+              if (distance_to_target < 5.0) {
+                ROS_INFO_STREAM("Found new target object.");
                 this->setNextGoal(target_objects_.boxes[i], dist_thres_to_target_object_); // 探索対象を次のゴールに設定
+                ROS_INFO_STREAM("Set new target_objects as goal.");
                 robot_behavior_state_ = RobotBehaviors::DETECT_TARGET_NAV;
                 is_set_next_as_target = true;
                 break;
@@ -377,10 +378,10 @@ public:
             }else{
               break;
             }
-          }else{
+          }else{ // 30秒おきに進捗を報告する
             ros::Duration verbose_time = ros::Time::now() - verbose_start;
             if (verbose_time.toSec() > 30.0) {
-              ROS_INFO_STREAM("Waiting Abort: passed 30s");
+              ROS_INFO_STREAM("Waiting Abort: passed 30s, Distance to goal: " << distance_to_goal);
               verbose_start = ros::Time::now();
             }
           }
@@ -433,6 +434,7 @@ public:
           ROS_INFO("!! DETECT_TARGET_PLANNING_ABORTED !!");
           this->cancelGoal(); // 今の探索対象をキャンセルして
           approached_target_objects_.boxes.pop_back(); // 最後に突っ込んだ探索済みとした探索対象を削除する
+          target_waypoint_index_ -= 1; // waypoint indexを１つ戻す
           break;
         }
         default:{
