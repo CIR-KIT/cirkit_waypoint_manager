@@ -73,7 +73,7 @@ public:
 class WaypointNavigator
 {
 public:
-  WaypointNavigator() : ac_("move_base", true), rate_(100)
+  WaypointNavigator() : ac_("move_base", true), rate_(10)
   {
     target_waypoint_index_ = 0;
     robot_behavior_state_ = RobotBehaviors::INIT_NAV;
