@@ -87,7 +87,7 @@ public:
     n.param("dist_thres_to_target_object", dist_thres_to_target_object_, 1.2);
     ROS_INFO("[Waypoints file name] : %s", filename.c_str());
     detect_target_objects_sub_ = nh_.subscribe("/recognized_result", 1, &WaypointNavigator::detectTargetObjectCallback, this);
-    detect_target_object_monitor_client_ = nh_.serviceClient<third_robot_monitor::TeleportAbsolute>("third_robot_human_pose");
+    detect_target_object_monitor_client_ = nh_.serviceClient<third_robot_monitor::TeleportAbsolute>("third_robot_monitor_human_pose");
     ROS_INFO("Reading Waypoints.");
     readWaypoint(filename.c_str());
     ROS_INFO("Waiting for action server to start.");
