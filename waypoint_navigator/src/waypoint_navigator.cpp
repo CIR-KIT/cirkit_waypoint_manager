@@ -289,6 +289,7 @@ public:
   
   void run()
   {
+    bool is_set_next_as_target = false;
     robot_behavior_state_ = RobotBehaviors::INIT_NAV;
     while(ros::ok()){
       WayPoint next_waypoint = this->getNextWaypoint();
@@ -299,7 +300,7 @@ public:
           ROS_INFO_STREAM("Found target objects : " << target_objects_.boxes.size());
           for (int i = 0; i < target_objects_.boxes.size(); ++i) {
             if (! this->isAlreadyApproachedToTargetObject(target_objects_.boxes[i])) { // 探索対象にまだアプローチしていなかったら
-              //今の位置から10[m]以内なら目指す
+              //今の位置から15[m]以内なら目指す
               geometry_msgs::Pose robot_pose = this->getRobotCurrentPosition();
               geometry_msgs::Pose target_pose(target_objects_.boxes[i].pose);
               double distance_to_target = this->calculateDistance(robot_pose, target_pose);
@@ -307,14 +308,19 @@ public:
                 ROS_INFO_STREAM("Found new target objects.");
                 this->setNextGoal(target_objects_.boxes[i], dist_thres_to_target_object_); // 探索対象を次のゴールに設定
                 robot_behavior_state_ = RobotBehaviors::DETECT_TARGET_NAV;
+                is_set_next_as_target = true;
                 break;
               }else // 探索対象が見つかったが遠すぎる
               {
                 ROS_INFO_STREAM("Found new target object, but too far.");
-                this->setNextGoal(next_waypoint);
-                robot_behavior_state_ = RobotBehaviors::WAYPOINT_NAV;
               }
             }
+          }
+          if (! is_set_next_as_target) {
+            this->setNextGoal(next_waypoint);
+            robot_behavior_state_ = RobotBehaviors::WAYPOINT_NAV;
+            is_set_next_as_target = false;
+            ROS_INFO_STREAM("Valid target object isn't founded, hence next waypoint is set.");
           }
         }else // 探索エリアだが探索対象がいない
         {
