@@ -17,7 +17,7 @@ find_package(PkgConfig)
 pkg_search_module(EIGEN REQUIRED eigen3)
 
 catkin_package(
-  # INCLUDE_DIRS include
+  INCLUDE_DIRS include
   # DEPENDS Eigen
 #  LIBRARIES waypoint_navigator
 #  CATKIN_DEPENDS roscpp
@@ -30,6 +30,7 @@ catkin_package(
 
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
   ${EIGEN_INCLUDE_DIRS}
 )
