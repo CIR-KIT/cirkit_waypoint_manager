@@ -27,6 +27,7 @@ read_csv.cpp : https://gist.github.com/yoneken/5765597#file-read_csv-cpp
 #include <ros/package.h>
 
 #include <third_robot_monitor/TeleportAbsolute.h>
+#include <ros_colored_msg.h>
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
