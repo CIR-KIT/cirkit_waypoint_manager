@@ -289,9 +289,9 @@ public:
   
   void run()
   {
-    bool is_set_next_as_target = false;
     robot_behavior_state_ = RobotBehaviors::INIT_NAV;
     while(ros::ok()){
+      bool is_set_next_as_target = false;
       WayPoint next_waypoint = this->getNextWaypoint();
       ROS_INFO("Next WayPoint is got");
       if (next_waypoint.isSearchArea()) { // 次のwaypointが探索エリアがどうか判定
@@ -335,6 +335,7 @@ public:
         robot_behavior_state_ = RobotBehaviors::WAYPOINT_NAV;
       }
       ros::Time begin_navigation = ros::Time::now(); // 新しいナビゲーションを設定した時間
+      ros::Time verbose_start = ros::Time::now();
       double last_distance_to_goal = 0;
       double delta_distance_to_goal = 1.0; // 0.1[m]より大きければよい
       while(ros::ok())
@@ -350,6 +351,12 @@ public:
           if (how_long_stay_time.toSec() > 180.0 ) { // 180秒間経過していたら
             robot_behavior_state_ = RobotBehaviors::PLANNING_ABORTED; // プランニング失敗とする
             break;
+          }else{
+            ros::Duration verbose_time = ros::Time::now() - verbose_start;
+            if (verbose_time.toSec() > 30.0) {
+              ROS_INFO_STREAM("Waiting Abort: passed 30s");
+              verbose_start = ros::Time::now();
+            }
           }
         }else{ // 0.1[m]以上進んでいればOK
           last_distance_to_goal = distance_to_goal;
