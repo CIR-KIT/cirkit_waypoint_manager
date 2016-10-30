@@ -26,6 +26,8 @@ read_csv.cpp : https://gist.github.com/yoneken/5765597#file-read_csv-cpp
 
 #include <ros/package.h>
 
+#include <third_robot_monitor/TeleportAbsolute.h>
+
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
@@ -39,7 +41,8 @@ enum State
     WAYPOINT_REACHED_GOAL,
     DETECT_TARGET_REACHED_GOAL,
     INIT_NAV,
-    PLANNING_ABORTED,
+    WAYPOINT_NAV_PLANNING_ABORTED,
+    DETECT_TARGET_NAV_PLANNING_ABORTED,
   };
 }
 
@@ -80,9 +83,10 @@ public:
                          ros::package::getPath("waypoint_navigator")
                          + "/waypoints/garden_waypoints.csv");
 
-    n.param("dist_thres_to_target_object", dist_thres_to_target_object_, 1.5);
+    n.param("dist_thres_to_target_object", dist_thres_to_target_object_, 1.2);
     ROS_INFO("[Waypoints file name] : %s", filename.c_str());
     detect_target_objects_sub_ = nh_.subscribe("/recognized_result", 1, &WaypointNavigator::detectTargetObjectCallback, this);
+    detect_target_object_monitor_client_ = nh_.serviceClient<third_robot_monitor::TeleportAbsolute>("third_robot_human_pose");
     ROS_INFO("Reading Waypoints.");
     readWaypoint(filename.c_str());
     ROS_INFO("Waiting for action server to start.");
@@ -286,6 +290,20 @@ public:
   {
     projector_.projectLaser(*scan, cloud_);
   }
+
+  void sendApproachedTargetPosition()
+  {
+    jsk_recognition_msgs::BoundingBox approached_target_object = approached_target_objects_.boxes.back();
+    third_robot_monitor::TeleportAbsolute srv_;
+    srv_.request.x = approached_target_object.pose.position.x;
+    srv_.request.y = approached_target_object.pose.position.y;
+    srv_.request.theta = 0;
+    if (detect_target_object_monitor_client_.call(srv_)) {
+      ROS_INFO("Succeed to send target object position to server.");
+    }else{
+      ROS_INFO("Failed to send target object position to server.");
+    }
+  }
   
   void run()
   {
@@ -348,9 +366,16 @@ public:
         delta_distance_to_goal = last_distance_to_goal - distance_to_goal; // どれだけ進んだか
         if(delta_distance_to_goal < 0.1){ // 進んだ距離が0.1[m]より小さくて
           ros::Duration how_long_stay_time = ros::Time::now() - begin_navigation;
-          if (how_long_stay_time.toSec() > 180.0 ) { // 180秒間経過していたら
-            robot_behavior_state_ = RobotBehaviors::PLANNING_ABORTED; // プランニング失敗とする
-            break;
+          if (how_long_stay_time.toSec() > 90.0 ) { // 90秒間経過していたら
+            if (robot_behavior_state_ == RobotBehaviors::WAYPOINT_NAV) {
+              robot_behavior_state_ = RobotBehaviors::WAYPOINT_NAV_PLANNING_ABORTED; // プランニング失敗とする
+              break;
+            }else if(robot_behavior_state_ == RobotBehaviors::DETECT_TARGET_NAV){
+              robot_behavior_state_ = RobotBehaviors::DETECT_TARGET_NAV_PLANNING_ABORTED;
+              break;
+            }else{
+              break;
+            }
           }else{
             ros::Duration verbose_time = ros::Time::now() - verbose_start;
             if (verbose_time.toSec() > 30.0) {
@@ -392,16 +417,23 @@ public:
           ROS_INFO("DETECT_TARGET_REACHED_GOAL");
           this->cancelGoal(); // 探索対象を見つけたらその場で停止して
           ros::Duration(5.0).sleep(); // 5秒停止する
+          this->sendApproachedTargetPosition(); // サーバに探索対象の位置を送信する
           // waypointを戻したりするべきかどうか
           break;
         }
-        case RobotBehaviors::PLANNING_ABORTED: {
-          ROS_INFO("!! PLANNING_ABORTED !!");
+        case RobotBehaviors::WAYPOINT_NAV_PLANNING_ABORTED: {
+          ROS_INFO("!! WAYPOINT_NAV_PLANNING_ABORTED !!");
           this->cancelGoal(); // 今のゴールをキャンセルして
           //this->tryBackRecovery(); // 1mくらい戻ってみて
           target_waypoint_index_ -= 1; // waypoint indexを１つ戻す
           break;
-        }  
+        }
+        case RobotBehaviors::DETECT_TARGET_NAV_PLANNING_ABORTED: {
+          ROS_INFO("!! DETECT_TARGET_PLANNING_ABORTED !!");
+          this->cancelGoal(); // 今の探索対象をキャンセルして
+          approached_target_objects_.boxes.pop_back(); // 最後に突っ込んだ探索済みとした探索対象を削除する
+          break;
+        }
         default:{
           ROS_WARN_STREAM("!! UNKNOWN STATE !!");
           break;
@@ -430,6 +462,7 @@ private:
   laser_geometry::LaserProjection projector_;
   sensor_msgs::PointCloud cloud_;
   ros::Publisher cmd_vel_pub_;
+  ros::ServiceClient detect_target_object_monitor_client_;
 };
 
 
