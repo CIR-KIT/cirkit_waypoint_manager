@@ -84,7 +84,7 @@ public:
                          ros::package::getPath("waypoint_navigator")
                          + "/waypoints/garden_waypoints.csv");
 
-    n.param("dist_thres_to_target_object", dist_thres_to_target_object_, 1.2);
+    n.param("dist_thres_to_target_object", dist_thres_to_target_object_, 0.2);
     ROS_INFO("[Waypoints file name] : %s", filename.c_str());
     detect_target_objects_sub_ = nh_.subscribe("/recognized_result", 1, &WaypointNavigator::detectTargetObjectCallback, this);
     detect_target_object_monitor_client_ = nh_.serviceClient<third_robot_monitor::TeleportAbsolute>("third_robot_monitor_human_pose");
@@ -194,10 +194,11 @@ public:
                    double threshold)
   {
     reach_threshold_ = threshold;
-    // 探索対象へのアプローチの場合はアプローチ時のロボットの姿勢を計算する必要がある
-    // まだ出来てない。
+    // 現在のロボットの位置と探索対象を中心とした円の交点座標のロボットに近い方
+    geometry_msgs::Pose approach_pos = this->getTargetObjectApproachPosition(target_object.pose,
+                                                                             1.0);
     approached_target_objects_.boxes.push_back(target_object);//探索済みに追加
-    this->sendNewGoal(target_object.pose);
+    this->sendNewGoal(approach_pos);
   }
 
   // 通常のwaypointの場合
@@ -305,7 +306,35 @@ public:
       ROS_INFO("Failed to send target object position to server.");
     }
   }
-  
+
+  geometry_msgs::Pose getTargetObjectApproachPosition(geometry_msgs::Pose target_position, double tolerance)
+  {
+    geometry_msgs::Pose answers[2];
+    double distances[2];
+    geometry_msgs::Pose robot_position = this->getRobotCurrentPosition();
+    if ((robot_position.position.x - target_position.position.x)==0.0 ) {
+      answers[0].position.x = target_position.position.x;
+      answers[0].position.y = target_position.position.y + tolerance;
+      answers[1].position.x = target_position.position.x;
+      answers[1].position.y = target_position.position.y - tolerance;
+    }else{
+      double C = (target_position.position.y - robot_position.position.y)
+        / (target_position.position.x - robot_position.position.x);
+      answers[0].position.x = target_position.position.x + tolerance/sqrt(1+pow(C, 2.0));
+      answers[0].position.y = target_position.position.y + (C*tolerance)/sqrt(1+pow(C, 2.0));
+      answers[1].position.x = target_position.position.x - tolerance/sqrt(1+pow(C, 2.0));
+      answers[1].position.y = target_position.position.y - (C*tolerance)/sqrt(1+pow(C, 2.0));
+    }
+    for (size_t i = 0; i < 2; ++i) {
+      distances[i] = this->calculateDistance(robot_position, answers[i]);
+    }
+    if (distances[0] < distances[1]) {
+      return answers[0];
+    }else{
+      return answers[1];
+    }
+  }
+
   void run()
   {
     robot_behavior_state_ = RobotBehaviors::INIT_NAV;
