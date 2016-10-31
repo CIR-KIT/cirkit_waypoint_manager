@@ -36,8 +36,8 @@ public:
     rate_(5)
   {
     ros::NodeHandle n("~");
-    n.param("dist_th", dist_th_, 5.0); // distance threshold [m]
-    n.param("yaw_th", yaw_th_, 60.0*3.1415/180.0); // yaw threshold [rad]
+    n.param("dist_th", dist_th_, 1.0); // distance threshold [m]
+    n.param("yaw_th", yaw_th_, 45.0*3.1415/180.0); // yaw threshold [rad]
     odom_sub_ = nh_.subscribe<geometry_msgs::PoseWithCovarianceStamped>("/amcl_pose",
                               1,
                               &WaypointGenerator::addWaypoint, this);
