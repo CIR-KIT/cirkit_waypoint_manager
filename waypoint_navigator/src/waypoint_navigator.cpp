@@ -326,6 +326,7 @@ public:
       answers[1].position.y = target_position.position.y - (C*tolerance)/sqrt(1+pow(C, 2.0));
     }
     for (size_t i = 0; i < 2; ++i) {
+      answers[i].orientation = target_position.orientation;
       distances[i] = this->calculateDistance(robot_position, answers[i]);
     }
     if (distances[0] < distances[1]) {
