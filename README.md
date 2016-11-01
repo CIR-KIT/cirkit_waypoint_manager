@@ -39,6 +39,12 @@ The normal color is green.
 - `dist_th` : threshold of distance for adding new waypoint
 - `yaw_th` : threshold of yaw angle[rad] for adding new waypoint
 
+### check waypoints
+If you want to check the waypoints,
+```bash
+rosrun ros_waypoint_generator ros_waypoint_server --load path/to/waypoints.csv
+```
+
 ## TODO
 - [x] waypointを保存する
 - [x] waypointを読み込む
