@@ -53,3 +53,6 @@ add_dependencies(ros_waypoint_generator ros_waypoint_generator_generate_messages
 add_executable(ros_waypoint_saver src/ros_waypoint_saver.cpp)
 target_link_libraries(ros_waypoint_saver ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
 add_dependencies(ros_waypoint_saver ros_waypoint_generator_generate_messages_cpp)
+
+add_executable(ros_waypoint_server src/ros_waypoint_server.cpp)
+target_link_libraries(ros_waypoint_server ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
