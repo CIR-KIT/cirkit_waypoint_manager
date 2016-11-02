@@ -5,6 +5,7 @@
     <!-- <param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/garden_waypoints.csv" /> -->
 
     <!-- <param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/2016-10-20-12-47-54-with-search-area.csv" /> -->
-    <param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/2016-11-01-04-01-48.csv" />
+    <!--param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/tobata2016-with-search-area-2m.csv" /-->
+    <param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/gazebo_waypoints.csv" />
   </node>
 </launch>
