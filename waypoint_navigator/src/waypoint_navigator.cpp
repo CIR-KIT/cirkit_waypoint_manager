@@ -85,7 +85,9 @@ public:
                          ros::package::getPath("waypoint_navigator")
                          + "/waypoints/garden_waypoints.csv");
 
-    n.param("dist_thres_to_target_object", dist_thres_to_target_object_, 1.5);
+    n.param("dist_thres_to_target_object", dist_thres_to_target_object_, 1.8);
+    n.param("limit_of_approach_to_target", limit_of_approach_to_target_, 5);
+    
     ROS_INFO("[Waypoints file name] : %s", filename.c_str());
     detect_target_objects_sub_ = nh_.subscribe("/recognized_result", 1, &WaypointNavigator::detectTargetObjectCallback, this);
     detect_target_object_monitor_client_ = nh_.serviceClient<third_robot_monitor::TeleportAbsolute>("third_robot_monitor_human_pose");
@@ -119,9 +121,10 @@ public:
     waypoint_marker.type = visualization_msgs::Marker::ARROW;
     waypoint_marker.action = visualization_msgs::Marker::ADD;
     waypoint_marker.pose = waypoint;
+    waypoint_marker.pose.position.z = 0.3;
     waypoint_marker.scale.x = 0.8;
     waypoint_marker.scale.y = 0.5;
-    waypoint_marker.scale.z = 0.0;
+    waypoint_marker.scale.z = 0.1;
     waypoint_marker.color.a = 0.7;
     waypoint_marker.color.r = 0.05 + 1.0*(float)target_object_mode;
     waypoint_marker.color.g = 0.80;
@@ -367,6 +370,7 @@ public:
   void run()
   {
     robot_behavior_state_ = RobotBehaviors::INIT_NAV;
+    number_of_approached_to_target_ = 0;
     while(ros::ok()){
       bool is_set_next_as_target = false;
       WayPoint next_waypoint = this->getNextWaypoint();
@@ -479,6 +483,8 @@ public:
           ros::Duration(5.0).sleep(); // 5秒停止する
           this->sendApproachedTargetPosition(); // サーバに探索対象の位置を送信する
           // waypointを戻したりするべきかどうか
+          // アプローチ回数をリセットする
+          number_of_approached_to_target_ = 0;
           break;
         }
         case RobotBehaviors::WAYPOINT_NAV_PLANNING_ABORTED: {
@@ -491,7 +497,17 @@ public:
         case RobotBehaviors::DETECT_TARGET_NAV_PLANNING_ABORTED: {
           ROS_INFO("!! DETECT_TARGET_PLANNING_ABORTED !!");
           this->cancelGoal(); // 今の探索対象をキャンセルして
-          approached_target_objects_.boxes.pop_back(); // 最後に突っ込んだ探索済みとした探索対象を削除する
+          if (number_of_approached_to_target_ > limit_of_approach_to_target_) {
+            // もし何度も同じ探索対象にアプローチしても到達出来なかったら
+            // 探索済みに追加したままにしてアプローチ回数をリセットする
+            number_of_approached_to_target_ = 0;
+          }else{
+            // アプローチ回数が一定値以下だったら、
+            // 最後に突っ込んだ探索済みとした探索対象を削除する
+            ROS_RED_STREAM("Faild to approach ... " << number_of_approached_to_target_ << "times");
+            approached_target_objects_.boxes.pop_back();
+            number_of_approached_to_target_ += 1;
+          }
           target_waypoint_index_ -= 1; // waypoint indexを１つ戻す
           break;
         }
@@ -517,6 +533,8 @@ private:
   double dist_thres_to_target_object_; // 探索対象にどれだけ近づいたらゴールとするか
   double reach_threshold_; // 今セットされてるゴール（waypointもしくは探索対象）へのしきい値
   geometry_msgs::Pose now_goal_; // 現在目指しているゴールの座標
+  int number_of_approached_to_target_; // １つの探索対象について何度アプローチをしたか
+  int limit_of_approach_to_target_; // 1つの探索対象について何度までアプローチするか
   ros::Subscriber laser_scan_sub_;
   ros::Subscriber detect_target_objects_sub_;
   sensor_msgs::LaserScan scan_;
