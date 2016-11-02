@@ -485,6 +485,7 @@ public:
           // waypointを戻したりするべきかどうか
           // アプローチ回数をリセットする
           number_of_approached_to_target_ = 0;
+          target_waypoint_index_ -= 1;
           break;
         }
         case RobotBehaviors::WAYPOINT_NAV_PLANNING_ABORTED: {
