@@ -9,6 +9,7 @@ read_csv.cpp : https://gist.github.com/yoneken/5765597#file-read_csv-cpp
 #include <ros/package.h>
 #include <sensor_msgs/LaserScan.h>
 #include <sensor_msgs/PointCloud.h>
+#include <visualization_msgs/Marker.h>
 #include <laser_geometry/laser_geometry.h>
 #include <tf/transform_listener.h>
 #include <move_base_msgs/MoveBaseAction.h>
@@ -88,6 +89,7 @@ public:
     ROS_INFO("[Waypoints file name] : %s", filename.c_str());
     detect_target_objects_sub_ = nh_.subscribe("/recognized_result", 1, &WaypointNavigator::detectTargetObjectCallback, this);
     detect_target_object_monitor_client_ = nh_.serviceClient<third_robot_monitor::TeleportAbsolute>("third_robot_monitor_human_pose");
+    next_waypoint_marker_pub_ = nh_.advertise<visualization_msgs::Marker>("/next_waypoint", 1);
     ROS_INFO("Reading Waypoints.");
     readWaypoint(filename.c_str());
     ROS_INFO("Waiting for action server to start.");
@@ -105,6 +107,26 @@ public:
     goal.target_pose.header.stamp = ros::Time::now();
     ac_.sendGoal(goal);
     now_goal_ = goal.target_pose.pose;
+  }
+
+  void sendNextWaypointMarker(const geometry_msgs::Pose waypoint,
+                              int target_object_mode)
+  {
+    visualization_msgs::Marker waypoint_marker;
+    waypoint_marker.header.frame_id = "map";
+    waypoint_marker.header.stamp = ros::Time();
+    waypoint_marker.id = 0;
+    waypoint_marker.type = visualization_msgs::Marker::ARROW;
+    waypoint_marker.action = visualization_msgs::Marker::ADD;
+    waypoint_marker.pose = waypoint;
+    waypoint_marker.scale.x = 0.8;
+    waypoint_marker.scale.y = 0.5;
+    waypoint_marker.scale.z = 0.0;
+    waypoint_marker.color.a = 0.7;
+    waypoint_marker.color.r = 0.05 + 1.0*(float)target_object_mode;
+    waypoint_marker.color.g = 0.80;
+    waypoint_marker.color.b = 0.2;
+    next_waypoint_marker_pub_.publish(waypoint_marker);
   }
 
   void cancelGoal(){
@@ -198,6 +220,7 @@ public:
     geometry_msgs::Pose approach_pos = this->getTargetObjectApproachPosition(target_object.pose,
                                                                              1.0);
     approached_target_objects_.boxes.push_back(target_object);//探索済みに追加
+    this->sendNextWaypointMarker(approach_pos, 1);
     this->sendNewGoal(approach_pos);
   }
 
@@ -205,6 +228,7 @@ public:
   void setNextGoal(WayPoint waypoint)
   {
     reach_threshold_ = waypoint.reach_threshold_;
+    this->sendNextWaypointMarker(waypoint.goal_.target_pose.pose, 0);
     this->sendNewGoal(waypoint.goal_.target_pose.pose);
   }
 
@@ -495,6 +519,7 @@ private:
   laser_geometry::LaserProjection projector_;
   sensor_msgs::PointCloud cloud_;
   ros::Publisher cmd_vel_pub_;
+  ros::Publisher next_waypoint_marker_pub_;
   ros::ServiceClient detect_target_object_monitor_client_;
 };
 
