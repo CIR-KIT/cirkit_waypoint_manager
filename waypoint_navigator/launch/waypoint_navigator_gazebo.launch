@@ -9,4 +9,5 @@
     <param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/gazebo_waypoints.csv" />
     <!-- <param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/2016-11-01-18-58-06.csv" /> -->
   </node>
+  <node name="ros_waypoint_server" pkg="ros_waypoint_generator" type="ros_waypoint_server" args="--load $(find waypoint_navigator)/waypoints/gazebo_waypoints.csv" output="screen"/>
 </launch>
