@@ -125,7 +125,7 @@ public:
     waypoint_marker.color.a = 0.7;
     waypoint_marker.color.r = 0.05 + 1.0*(float)target_object_mode;
     waypoint_marker.color.g = 0.80;
-    waypoint_marker.color.b = 0.2;
+    waypoint_marker.color.b = 0.05 + 1.0*(float)target_object_mode;
     next_waypoint_marker_pub_.publish(waypoint_marker);
   }
 
