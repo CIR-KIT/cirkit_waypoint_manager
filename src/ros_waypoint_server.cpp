@@ -133,7 +133,7 @@ private:
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "waypoint_generator");
+  ros::init(argc, argv, "waypoint_server");
   WaypointServer waypoint_server;
 
   boost::program_options::options_description desc("Options");
