@@ -85,7 +85,7 @@ public:
                          ros::package::getPath("waypoint_navigator")
                          + "/waypoints/garden_waypoints.csv");
 
-    n.param("dist_thres_to_target_object", dist_thres_to_target_object_, 0.2);
+    n.param("dist_thres_to_target_object", dist_thres_to_target_object_, 1.5);
     ROS_INFO("[Waypoints file name] : %s", filename.c_str());
     detect_target_objects_sub_ = nh_.subscribe("/recognized_result", 1, &WaypointNavigator::detectTargetObjectCallback, this);
     detect_target_object_monitor_client_ = nh_.serviceClient<third_robot_monitor::TeleportAbsolute>("third_robot_monitor_human_pose");
@@ -198,7 +198,7 @@ public:
     for (int i = 0; i < approached_target_objects_.boxes.size(); ++i) {
       double dist = calculateDistance(target_object.pose,
                                       approached_target_objects_.boxes[i].pose);
-      if (dist < 3.0) { // しきい値はパラメータサーバで設定できるようにする
+      if (dist < 5.0) { // しきい値はパラメータサーバで設定できるようにする
         return true;
       }
     }
@@ -222,13 +222,17 @@ public:
     approached_target_objects_.boxes.push_back(target_object);//探索済みに追加
     this->sendNextWaypointMarker(approach_pos, 1);
     this->sendNewGoal(approach_pos);
+    // move_baseに渡すgoalはgetTargetObjectApproachPosition()で計算した座標を渡すけど、
+    // 実際に探索対象に到達したかどうかの計算には探索対象自体の位置を使いたいから、
+    // now_goal_を実際の探索対象の位置で上書きする
+    now_goal_ = target_object.pose;
   }
 
   // 通常のwaypointの場合
   void setNextGoal(WayPoint waypoint)
   {
     reach_threshold_ = waypoint.reach_threshold_;
-    this->sendNextWaypointMarker(waypoint.goal_.target_pose.pose, 0);
+    this->sendNextWaypointMarker(waypoint.goal_.target_pose.pose, 0); // 現在目指しているwaypointを表示する
     this->sendNewGoal(waypoint.goal_.target_pose.pose);
   }
 
