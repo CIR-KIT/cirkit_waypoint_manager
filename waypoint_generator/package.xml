@@ -17,6 +17,7 @@
   <depend>interactive_markers</depend>
   <depend>message_generation</depend>
   <depend>message_runtime</depend>  
+  <depend>nav_msgs</depend>
   <depend>std_msgs</depend>
   <depend>tf</depend>
   <depend>visualization_msgs</depend>

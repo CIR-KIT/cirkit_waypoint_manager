@@ -1,15 +1,13 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(ros_waypoint_generator)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   cmake_modules
   geometry_msgs
   interactive_markers
   message_generation
+  nav_msgs
   roscpp
   std_msgs
   tf
@@ -32,9 +30,8 @@ generate_messages(
 
 
 catkin_package(
-  CATKIN_DEPENDS roscpp geometry_msgs interactive_markers message_runtime roscpp std_msgs tf visualization_msgs
+  CATKIN_DEPENDS roscpp cmake_modules geometry_msgs interactive_markers  message_runtime nav_msgs roscpp std_msgs tf visualization_msgs
 )
-
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
