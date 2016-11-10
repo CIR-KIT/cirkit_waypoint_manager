@@ -7,10 +7,10 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   jsk_recognition_msgs
   laser_geometry
-  sensor_msgs
   message_generation
   move_base_msgs
   roslib
+  sensor_msgs
   std_msgs
   tf
   visualization_msgs
@@ -32,7 +32,7 @@ generate_messages(
 
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp actionlib geometry_msgs jsk_recognition_msgs laser_geometry sensor_msgs message_runtime move_base_msgs std_msgs tf visualization_msgs
+  CATKIN_DEPENDS roscpp actionlib geometry_msgs jsk_recognition_msgs laser_geometry roslib sensor_msgs message_runtime move_base_msgs std_msgs tf visualization_msgs
   DEPENDS EIGEN
 )
 

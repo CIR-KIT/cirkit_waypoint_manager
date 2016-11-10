@@ -17,10 +17,11 @@
   <depend>geometry_msgs</depend>
   <depend>jsk_recognition_msgs</depend>
   <depend>laser_geometry</depend>
-  <depend>sensor_msgs</depend>
   <depend>message_generation</depend>
   <depend>message_runtime</depend>
   <depend>move_base_msgs</depend>
+  <depend>roslib</depend>
+  <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>tf</depend>
   <depend>visualization_msgs</depend>
