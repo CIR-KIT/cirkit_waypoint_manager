@@ -1,25 +1,22 @@
 #include <ros/ros.h>
-
-#include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
-
 #include <interactive_markers/interactive_marker_server.h>
 #include <interactive_markers/menu_handler.h>
-#include <visualization_msgs/MarkerArray.h>
-
-#include <tf/transform_broadcaster.h>
+#include <nav_msgs/Odometry.h>
+#include <ros_waypoint_generator/WaypointArray.h>
 #include <tf/tf.h>
+#include <tf/transform_broadcaster.h>
+#include <visualization_msgs/MarkerArray.h>
 
 #include <math.h>
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <fstream>
+
 #include <boost/tokenizer.hpp>
 #include <boost/shared_array.hpp>
 #include <boost/program_options.hpp>
-
-#include <ros_waypoint_generator/WaypointArray.h>
 
 using namespace visualization_msgs;
 
