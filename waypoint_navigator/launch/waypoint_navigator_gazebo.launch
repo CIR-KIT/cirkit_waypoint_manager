@@ -1,0 +1,13 @@
+<launch>
+  <node name="waypoint_navigator_node" pkg="waypoint_navigator" type="waypoint_navigator_node" output="screen">
+    <!-- <param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/2016-10-18-22-09-13.csv" />
+    -->
+    <!-- <param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/garden_waypoints.csv" /> -->
+
+    <!-- <param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/2016-10-20-12-47-54-with-search-area.csv" /> -->
+    <!--param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/tobata2016-with-search-area-2m.csv" /-->
+    <param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/gazebo_waypoints.csv" />
+    <!-- <param name="waypointsfile" value="$(find waypoint_navigator)/waypoints/2016-11-01-18-58-06.csv" /> -->
+  </node>
+  <node name="ros_waypoint_server" pkg="ros_waypoint_generator" type="ros_waypoint_server" args="--load $(find waypoint_navigator)/waypoints/gazebo_waypoints.csv" output="screen"/>
+</launch>
