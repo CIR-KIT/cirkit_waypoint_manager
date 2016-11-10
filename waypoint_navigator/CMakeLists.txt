@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   roslib
   laser_geometry
   genmsg
+  message_generation
+  std_msgs
 )
 
 find_package(PkgConfig)
@@ -32,9 +34,9 @@ generate_messages(
 
 catkin_package(
   INCLUDE_DIRS include
-  # DEPENDS Eigen
+#  DEPENDS Eigen
 #  LIBRARIES waypoint_navigator
-#  CATKIN_DEPENDS roscpp
+  CATKIN_DEPENDS roscpp actionlib move_base_msgs tf roslib laser_geometry genmsg std_msgs message_runtime
 )
 
 ###########
