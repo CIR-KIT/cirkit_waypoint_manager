@@ -29,7 +29,6 @@ generate_messages(
   DEPENDENCIES
 )
 
-
 catkin_package(
   INCLUDE_DIRS include
   CATKIN_DEPENDS roscpp actionlib geometry_msgs jsk_recognition_msgs laser_geometry sensor_msgs message_runtime move_base_msgs std_msgs tf visualization_msgs

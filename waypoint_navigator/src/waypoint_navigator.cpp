@@ -4,7 +4,6 @@ read_csv.cpp : https://gist.github.com/yoneken/5765597#file-read_csv-cpp
 
 -------------------------------------------------- */
 
-
 #include <ros/ros.h>
 #include <ros/package.h>
 #include <actionlib/client/simple_action_client.h>
@@ -17,18 +16,17 @@ read_csv.cpp : https://gist.github.com/yoneken/5765597#file-read_csv-cpp
 #include <sensor_msgs/PointCloud.h>
 #include <tf/transform_listener.h>
 #include <visualization_msgs/Marker.h>
-
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <fstream>
-#include <boost/tokenizer.hpp>
-#include <boost/shared_array.hpp>
-
-#include <ros/package.h>
-
 #include <waypoint_navigator/TeleportAbsolute.h>
-#include <ros_colored_msg.h>
+
+#include <boost/shared_array.hpp>
+#include <boost/tokenizer.hpp>
+
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
+
+#include "ros_colored_msg.h" // FIXME: this header depend ROS, but exclude ros header. Now must be readed after #include"ros/ros.h"
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
