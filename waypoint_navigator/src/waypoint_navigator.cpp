@@ -27,7 +27,7 @@ read_csv.cpp : https://gist.github.com/yoneken/5765597#file-read_csv-cpp
 
 #include <ros/package.h>
 
-#include <third_robot_monitor/TeleportAbsolute.h>
+#include <waypoint_navigator/TeleportAbsolute.h>
 #include <ros_colored_msg.h>
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
@@ -90,7 +90,7 @@ public:
     
     ROS_INFO("[Waypoints file name] : %s", filename.c_str());
     detect_target_objects_sub_ = nh_.subscribe("/recognized_result", 1, &WaypointNavigator::detectTargetObjectCallback, this);
-    detect_target_object_monitor_client_ = nh_.serviceClient<third_robot_monitor::TeleportAbsolute>("third_robot_monitor_human_pose");
+    detect_target_object_monitor_client_ = nh_.serviceClient<waypoint_navigator::TeleportAbsolute>("third_robot_monitor_human_pose");
     next_waypoint_marker_pub_ = nh_.advertise<visualization_msgs::Marker>("/next_waypoint", 1);
     ROS_INFO("Reading Waypoints.");
     readWaypoint(filename.c_str());
@@ -327,7 +327,7 @@ public:
   void sendApproachedTargetPosition()
   {
     jsk_recognition_msgs::BoundingBox approached_target_object = approached_target_objects_.boxes.back();
-    third_robot_monitor::TeleportAbsolute srv_;
+    waypoint_navigator::TeleportAbsolute srv_;
     srv_.request.x = approached_target_object.pose.position.x;
     srv_.request.y = approached_target_object.pose.position.y;
     srv_.request.theta = 0;

@@ -11,10 +11,24 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   roslib
   laser_geometry
+  genmsg
 )
 
 find_package(PkgConfig)
 pkg_search_module(EIGEN REQUIRED eigen3)
+
+## Generate services in the 'srv' folder
+add_service_files(
+  FILES
+  TeleportAbsolute.srv
+)
+
+## Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+
 
 catkin_package(
   INCLUDE_DIRS include
