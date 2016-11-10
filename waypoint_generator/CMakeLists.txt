@@ -42,12 +42,13 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 ## Declare a C++ executable
 add_executable(ros_waypoint_generator src/ros_waypoint_generator.cpp)
+add_dependencies(ros_waypoint_generator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(ros_waypoint_generator ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
-add_dependencies(ros_waypoint_generator ros_waypoint_generator_generate_messages_cpp)
 
 add_executable(ros_waypoint_saver src/ros_waypoint_saver.cpp)
+add_dependencies(ros_waypoint_saver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(ros_waypoint_saver ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
-add_dependencies(ros_waypoint_saver ros_waypoint_generator_generate_messages_cpp)
 
 add_executable(ros_waypoint_server src/ros_waypoint_server.cpp)
+add_dependencies(ros_waypoint_server ${catkin_EXPORTED_TARGETS})
 target_link_libraries(ros_waypoint_server ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
