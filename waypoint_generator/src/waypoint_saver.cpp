@@ -20,7 +20,7 @@
 #include <boost/program_options.hpp>
 #include <boost/date_time.hpp>
 
-#include <ros_waypoint_generator/WaypointArray.h>
+#include <waypoint_generator/WaypointArray.h>
 
 bool compareInteractiveMarker(visualization_msgs::InteractiveMarker left,
                               visualization_msgs::InteractiveMarker right)
@@ -52,7 +52,7 @@ public:
     ROS_INFO("Waiting for waypoints");
   }
 
-  void waypointsCallback(ros_waypoint_generator::WaypointArray waypoints)
+  void waypointsCallback(waypoint_generator::WaypointArray waypoints)
   {
     ROS_INFO("Received waypoints : %d", (int)waypoints.waypoints.size());
 

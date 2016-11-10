@@ -3,7 +3,7 @@
 #include <interactive_markers/interactive_marker_server.h>
 #include <interactive_markers/menu_handler.h>
 #include <nav_msgs/Odometry.h>
-#include <ros_waypoint_generator/WaypointArray.h>
+#include <waypoint_generator/WaypointArray.h>
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <visualization_msgs/MarkerArray.h>
@@ -40,7 +40,7 @@ public:
                               &WaypointGenerator::addWaypoint, this);
     clicked_sub_ = nh_.subscribe("clicked_point", 1, &WaypointGenerator::clickedPointCallback, this);
     reach_marker_pub_ = nh_.advertise<visualization_msgs::MarkerArray>("/reach_threshold_markers", 1);
-    waypoints_pub_ = nh_.advertise<ros_waypoint_generator::WaypointArray>("/waypoints", 1);
+    waypoints_pub_ = nh_.advertise<waypoint_generator::WaypointArray>("/waypoints", 1);
     waypoint_box_count_ = 0;
     server.reset( new interactive_markers::InteractiveMarkerServer("cube") );
   }
@@ -198,7 +198,7 @@ public:
     server->setCallback(int_marker.name, boost::bind(&WaypointGenerator::processFeedback, this, _1));
     server->applyChanges();
 
-    ros_waypoint_generator::Waypoint waypoint;
+    waypoint_generator::Waypoint waypoint;
     waypoint.number = waypoint_box_count_;
     waypoint.pose = new_pose.pose;
     waypoint.is_search_area = is_searching_area;
@@ -272,7 +272,7 @@ private:
   ros::Publisher reach_marker_pub_;
   ros::Publisher waypoints_pub_;
   geometry_msgs::PoseWithCovariance last_pose_;
-  ros_waypoint_generator::WaypointArray waypoints_;
+  waypoint_generator::WaypointArray waypoints_;
   double dist_th_;
   double yaw_th_;
   int waypoint_box_count_;

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(ros_waypoint_generator)
+project(waypoint_generator)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -44,13 +44,13 @@ include_directories(
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 ## Declare a C++ executable
-add_executable(ros_waypoint_generator src/ros_waypoint_generator.cpp)
-target_link_libraries(ros_waypoint_generator ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
-add_dependencies(ros_waypoint_generator ros_waypoint_generator_generate_messages_cpp)
+add_executable(waypoint_generator src/waypoint_generator.cpp)
+target_link_libraries(waypoint_generator ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
+add_dependencies(waypoint_generator waypoint_generator_generate_messages_cpp)
 
-add_executable(ros_waypoint_saver src/ros_waypoint_saver.cpp)
-target_link_libraries(ros_waypoint_saver ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
-add_dependencies(ros_waypoint_saver ros_waypoint_generator_generate_messages_cpp)
+add_executable(waypoint_saver src/waypoint_saver.cpp)
+target_link_libraries(waypoint_saver ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
+add_dependencies(waypoint_saver waypoint_generator_generate_messages_cpp)
 
-add_executable(ros_waypoint_server src/ros_waypoint_server.cpp)
-target_link_libraries(ros_waypoint_server ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
+add_executable(waypoint_server src/waypoint_server.cpp)
+target_link_libraries(waypoint_server ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)

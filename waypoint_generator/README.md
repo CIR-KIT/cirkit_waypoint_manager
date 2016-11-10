@@ -1,4 +1,4 @@
-# ros_waypoint_generator
+# waypoint_generator
 This package generate waypoints for 2D navigation by using /map and /odom
 
 ## How to use
@@ -15,11 +15,11 @@ This package generate waypoints for 2D navigation by using /map and /odom
 #### generate waypoint
 
 ```bash
-$ rosrun ros_waypoint_generator ros_waypoint_generator
+$ rosrun waypoint_generator waypoint_generator
 ```
 If you have already had waypoints file as point.csv,  
 ```bash
-$ rosrun ros_waypoint_generator ros_waypoint_generator --load path/to/point.csv
+$ rosrun waypoint_generator waypoint_generator --load path/to/point.csv
 ```
 The waypoint file format is below.
 ```
@@ -27,7 +27,7 @@ x, y, z, qx, qy, qz, qw, is_searching_area, reach_threshold
 ```
 #### save waypoint
 ```bash
-$ rosrun ros_waypoint_generator ros_waypoint_saver
+$ rosrun waypoint_generator waypoint_saver
 ```
 
 ### modify_waypoint
@@ -42,7 +42,7 @@ The normal color is green.
 ### check waypoints
 If you want to check the waypoints,
 ```bash
-rosrun ros_waypoint_generator ros_waypoint_server --load path/to/waypoints.csv
+rosrun waypoint_generator waypoint_server --load path/to/waypoints.csv
 ```
 
 ## TODO
