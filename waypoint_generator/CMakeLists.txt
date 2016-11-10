@@ -30,7 +30,7 @@ generate_messages(
 
 
 catkin_package(
-  CATKIN_DEPENDS roscpp cmake_modules geometry_msgs interactive_markers  message_runtime nav_msgs roscpp std_msgs tf visualization_msgs
+  CATKIN_DEPENDS roscpp cmake_modules geometry_msgs interactive_markers message_runtime nav_msgs roscpp std_msgs tf visualization_msgs
 )
 
 include_directories(
