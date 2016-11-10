@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(waypoint_navigator)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   actionlib
@@ -30,15 +27,13 @@ add_service_files(
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
-#  std_msgs # no using
 )
 
 
 catkin_package(
   INCLUDE_DIRS include
-#  DEPENDS Eigen
-#  LIBRARIES waypoint_navigator
   CATKIN_DEPENDS roscpp actionlib geometry_msgs jsk_recognition_msgs laser_geometry sensor_msgs message_runtime move_base_msgs std_msgs tf visualization_msgs
+  DEPENDS EIGEN
 )
 
 ###########
