@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   message_generation
   move_base_msgs
+  roslib
   std_msgs
   tf
   visualization_msgs
