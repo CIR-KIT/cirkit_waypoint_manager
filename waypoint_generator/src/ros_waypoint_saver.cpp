@@ -1,26 +1,25 @@
 #include <ros/ros.h>
-
-#include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
-
 #include <interactive_markers/interactive_marker_server.h>
 #include <interactive_markers/menu_handler.h>
+#include <nav_msgs/Odometry.h>
+#include <ros_waypoint_generator/WaypointArray.h>
+#include <tf/tf.h>
+#include <tf/transform_broadcaster.h>
 #include <visualization_msgs/InteractiveMarkerInit.h>
 #include <visualization_msgs/MarkerArray.h>
-#include <tf/transform_broadcaster.h>
-#include <tf/tf.h>
 
-#include <math.h>
-#include <string>
-#include <iostream>
-#include <sstream>
 #include <fstream>
-#include <boost/tokenizer.hpp>
-#include <boost/shared_array.hpp>
-#include <boost/program_options.hpp>
-#include <boost/date_time.hpp>
+#include <iostream>
+#include <math.h>
+#include <sstream>
+#include <string>
 
-#include <ros_waypoint_generator/WaypointArray.h>
+#include <boost/date_time.hpp>
+#include <boost/program_options.hpp>
+#include <boost/shared_array.hpp>
+#include <boost/tokenizer.hpp>
+
 
 bool compareInteractiveMarker(visualization_msgs::InteractiveMarker left,
                               visualization_msgs::InteractiveMarker right)
