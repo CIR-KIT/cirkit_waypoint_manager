@@ -6,13 +6,14 @@ project(ros_waypoint_generator)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  tf
   cmake_modules
-  interactive_markers
-  visualization_msgs
-  std_msgs
   geometry_msgs
+  interactive_markers
   message_generation
+  roscpp
+  std_msgs
+  tf
+  visualization_msgs
 )
 
 find_package(Boost 1.4 COMPONENTS program_options REQUIRED)
@@ -27,11 +28,11 @@ generate_messages(
   DEPENDENCIES
   std_msgs
   geometry_msgs
-  )
+)
 
 
 catkin_package(
-  CATKIN_DEPENDS roscpp interactive_markers visualization_msgs tf message_runtime
+  CATKIN_DEPENDS roscpp geometry_msgs interactive_markers message_runtime roscpp std_msgs tf visualization_msgs
 )
 
 
@@ -41,9 +42,6 @@ include_directories(
 )
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
-
-
-
 
 ## Declare a C++ executable
 add_executable(ros_waypoint_generator src/ros_waypoint_generator.cpp)
