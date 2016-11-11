@@ -3,11 +3,11 @@
 #include <interactive_markers/interactive_marker_server.h>
 #include <interactive_markers/menu_handler.h>
 #include <nav_msgs/Odometry.h>
-#include <ros_waypoint_generator/WaypointArray.h>
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <visualization_msgs/InteractiveMarkerInit.h>
 #include <visualization_msgs/MarkerArray.h>
+#include <waypoint_generator/WaypointArray.h>
 
 #include <fstream>
 #include <iostream>
@@ -19,7 +19,6 @@
 #include <boost/program_options.hpp>
 #include <boost/shared_array.hpp>
 #include <boost/tokenizer.hpp>
-
 
 bool compareInteractiveMarker(visualization_msgs::InteractiveMarker left,
                               visualization_msgs::InteractiveMarker right)
@@ -51,7 +50,7 @@ public:
     ROS_INFO("Waiting for waypoints");
   }
 
-  void waypointsCallback(ros_waypoint_generator::WaypointArray waypoints)
+  void waypointsCallback(waypoint_generator::WaypointArray waypoints)
   {
     ROS_INFO("Received waypoints : %d", (int)waypoints.waypoints.size());
 
