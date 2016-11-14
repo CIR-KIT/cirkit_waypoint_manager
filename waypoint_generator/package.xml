@@ -7,7 +7,7 @@
   <maintainer email="k104009y@mail.kyutech.jp">Ariyu</maintainer>
   <license>MIT</license>
 
-  <url type="repository">https://github.com/CIR-KIT/remote_monitor</url>
+  <url type="repository">https://github.com/CIR-KIT/waypoint_manager/tree/master/waypoint_generator</url>
   <!-- TODO:write this <author email="jane.doe@example.com">Jane Doe</author> -->
 
   <buildtool_depend>catkin</buildtool_depend>
