@@ -22,9 +22,9 @@
   <depend>move_base_msgs</depend>
   <depend>roslib</depend>
   <depend>sensor_msgs</depend>
-  <depend>std_msgs</depend>
   <depend>tf</depend>
   <depend>visualization_msgs</depend>
+  <exec_depend>waypoint_generator</exec_depend>
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
 
