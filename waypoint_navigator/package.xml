@@ -8,8 +8,9 @@
   <maintainer email="o111027y@mail.kyutech.jp">Doi Yusuke</maintainer>
   <license>MIT</license>
 
-  <!-- <url type="website">http://wiki.ros.org/waypoint_navigator</url> -->
-  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+  <url type="repository">https://github.com/CIR-KIT/waypoint_manager.git</url>
+  <url type="bugtracker">https://github.com/CIR-KIT/waypoint_manager/issues</url>
+  <!-- TODO: write this <author email="jane.doe@example.com">Jane Doe</author> -->
 
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
