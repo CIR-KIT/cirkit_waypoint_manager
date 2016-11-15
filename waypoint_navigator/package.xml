@@ -6,7 +6,7 @@
 
   <!-- <maintainer email="yuta@todo.todo">yuta</maintainer> -->
   <maintainer email="o111027y@mail.kyutech.jp">Doi Yusuke</maintainer>
-  <license>MIT</license>
+  <license>BSD</license>
 
   <url type="repository">https://github.com/CIR-KIT/waypoint_manager.git</url>
   <url type="bugtracker">https://github.com/CIR-KIT/waypoint_manager/issues</url>
