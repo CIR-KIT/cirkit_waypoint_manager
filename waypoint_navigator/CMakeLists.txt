@@ -57,3 +57,9 @@ target_link_libraries(waypoint_navigator_node
   ${catkin_LIBRARIES}
 )
 
+##########
+## Test ##
+##########
+ind_package(roslaunch)
+roslaunch_add_file_check(test/waypoint_navigator.test.xml)
+roslaunch_add_file_check(test/waypoint_navigator_gazebo.test.xml)
