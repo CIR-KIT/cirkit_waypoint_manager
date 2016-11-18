@@ -6,31 +6,18 @@ find_package(catkin REQUIRED COMPONENTS
   cmake_modules
   geometry_msgs
   interactive_markers
-  message_generation
   nav_msgs
   roscpp
   std_msgs
   tf
   visualization_msgs
+  waypoint_manager_msgs
 )
 
 find_package(Boost 1.4 COMPONENTS program_options REQUIRED)
 
-add_message_files(
-  FILES
-  Waypoint.msg
-  WaypointArray.msg
-)
-
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-  geometry_msgs
-)
-
-
 catkin_package(
-  CATKIN_DEPENDS roscpp geometry_msgs interactive_markers message_runtime nav_msgs roscpp std_msgs tf visualization_msgs
+  CATKIN_DEPENDS roscpp geometry_msgs interactive_markers nav_msgs roscpp std_msgs tf visualization_msgs
 )
 
 include_directories(
