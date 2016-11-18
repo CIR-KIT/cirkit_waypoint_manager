@@ -1,0 +1,4 @@
+- git:
+    local-name: waypoint_manager_msgs
+    uri: https://github.com/CIR-KIT/waypoint_manager_msgs.git
+    version: master

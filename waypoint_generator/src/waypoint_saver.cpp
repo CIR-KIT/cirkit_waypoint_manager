@@ -7,7 +7,7 @@
 #include <tf/transform_broadcaster.h>
 #include <visualization_msgs/InteractiveMarkerInit.h>
 #include <visualization_msgs/MarkerArray.h>
-#include <waypoint_generator/WaypointArray.h>
+#include <waypoint_manager_msgs/WaypointArray.h>
 
 #include <fstream>
 #include <iostream>
@@ -50,7 +50,7 @@ public:
     ROS_INFO("Waiting for waypoints");
   }
 
-  void waypointsCallback(waypoint_generator::WaypointArray waypoints)
+  void waypointsCallback(waypoint_manager_msgs::WaypointArray waypoints)
   {
     ROS_INFO("Received waypoints : %d", (int)waypoints.waypoints.size());
 
