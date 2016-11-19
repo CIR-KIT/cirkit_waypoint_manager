@@ -31,7 +31,7 @@ namespace pc
       case ENDCOLOR : os << "\033[0m";    break;
       default       : os << "\033[1;37m";
     }
-return os;
+    return os;
   }
 } //namespace pc
 
