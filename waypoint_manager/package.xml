@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>waypoint_manager</name>
+  <version>0.1.0</version>
+  <description>The metapackage for waypoint_manager.</description>
+
+  <maintainer email="k104009y@mail.kyutech.jp">Arita Yuta</maintainer>
+  <maintainer email="p595201m@mail.kyutech.jp">Masaru Morita</maintainer>
+  <license>BSD</license>
+  <url type="repository">https://github.com/CIR-KIT/waypoint_manager.git</url>
+  <url type="bugtracker">https://github.com/CIR-KIT/waypoint_manager/issues</url>
+  <author email="cirkit.infomation@gmail.com">CIR-KIT</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>waypoint_genarator</exec_depend>
+  <exec_depend>waypoint_navigator</exec_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>
