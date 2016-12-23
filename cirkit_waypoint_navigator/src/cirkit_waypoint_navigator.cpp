@@ -16,7 +16,7 @@ read_csv.cpp : https://gist.github.com/yoneken/5765597#file-read_csv-cpp
 #include <sensor_msgs/PointCloud.h>
 #include <tf/transform_listener.h>
 #include <visualization_msgs/Marker.h>
-#include <waypoint_navigator/TeleportAbsolute.h>
+#include <cirkit_waypoint_navigator/TeleportAbsolute.h>
 
 #include <boost/shared_array.hpp>
 #include <boost/tokenizer.hpp>
@@ -64,9 +64,9 @@ public:
 };
 
 
-class WaypointNavigator {
+class CirkitWaypointNavigator {
 public:
-  WaypointNavigator()
+  CirkitWaypointNavigator()
   : ac_("move_base", true),
     rate_(10)
   {
@@ -77,14 +77,14 @@ public:
     ros::NodeHandle n("~");
     n.param<std::string>("waypointsfile",
         filename,
-        ros::package::getPath("waypoint_navigator") + "/waypoints/garden_waypoints.csv"); // FIXME: Don't find!
+        ros::package::getPath("cirkit_waypoint_navigator") + "/waypoints/garden_waypoints.csv"); // FIXME: Don't find!
 
     n.param("dist_thres_to_target_object", dist_thres_to_target_object_, 1.8);
     n.param("limit_of_approach_to_target", limit_of_approach_to_target_, 5);
     
     ROS_INFO("[Waypoints file name] : %s", filename.c_str());
-    detect_target_objects_sub_ = nh_.subscribe("/recognized_result", 1, &WaypointNavigator::detectTargetObjectCallback, this);
-    detect_target_object_monitor_client_ = nh_.serviceClient<waypoint_navigator::TeleportAbsolute>("third_robot_monitor_human_pose");
+    detect_target_objects_sub_ = nh_.subscribe("/recognized_result", 1, &CirkitWaypointNavigator::detectTargetObjectCallback, this);
+    detect_target_object_monitor_client_ = nh_.serviceClient<cirkit_waypoint_navigator::TeleportAbsolute>("third_robot_monitor_human_pose");
     next_waypoint_marker_pub_ = nh_.advertise<visualization_msgs::Marker>("/next_waypoint", 1);
     ROS_INFO("Reading Waypoints.");
     readWaypoint(filename.c_str());
@@ -92,7 +92,7 @@ public:
     ac_.waitForServer();
   }
 
-  ~WaypointNavigator() {
+  ~CirkitWaypointNavigator() {
     this->cancelGoal();
   }
 
@@ -246,7 +246,7 @@ public:
 
   void tryBackRecovery() {
     ROS_INFO_STREAM("Start tryBackRecovery()");
-    laser_scan_sub_ = nh_.subscribe("scan_multi", 1, &WaypointNavigator::laserCallback, this);
+    laser_scan_sub_ = nh_.subscribe("scan_multi", 1, &CirkitWaypointNavigator::laserCallback, this);
     cmd_vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
     geometry_msgs::Twist msg;
     geometry_msgs::Pose start_recovery_position = this->getRobotCurrentPosition(); // 現在座標
@@ -295,7 +295,7 @@ public:
 
   void sendApproachedTargetPosition() {
     jsk_recognition_msgs::BoundingBox approached_target_object = approached_target_objects_.boxes.back();
-    waypoint_navigator::TeleportAbsolute srv_;
+    cirkit_waypoint_navigator::TeleportAbsolute srv_;
     srv_.request.x = approached_target_object.pose.position.x;
     srv_.request.y = approached_target_object.pose.position.y;
     srv_.request.theta = 0;
@@ -510,10 +510,10 @@ private:
 
 
 int main(int argc, char** argv){
-  ros::init(argc, argv, "waypoint_navigator");
+  ros::init(argc, argv, "cirkit_waypoint_navigator");
 
-  WaypointNavigator waypoint_navigator;
-  waypoint_navigator.run();
+  CirkitWaypointNavigator cirkit_waypoint_navigator;
+  cirkit_waypoint_navigator.run();
  
   return 0;
 }

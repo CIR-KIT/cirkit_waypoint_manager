@@ -52,3 +52,5 @@ Session.vim
 # Catkin custom files
 CATKIN_IGNORE
 
+# CI
+.moveit_ci/

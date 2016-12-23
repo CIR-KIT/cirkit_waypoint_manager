@@ -1,0 +1,4 @@
+- git:
+    local-name: cirkit_waypoint_manager_msgs
+    uri: https://github.com/CIR-KIT/cirkit_waypoint_manager_msgs.git
+    version: indigo-devel

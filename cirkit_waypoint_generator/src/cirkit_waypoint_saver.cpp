@@ -7,7 +7,7 @@
 #include <tf/transform_broadcaster.h>
 #include <visualization_msgs/InteractiveMarkerInit.h>
 #include <visualization_msgs/MarkerArray.h>
-#include <waypoint_manager_msgs/WaypointArray.h>
+#include <cirkit_waypoint_manager_msgs/WaypointArray.h>
 
 #include <fstream>
 #include <iostream>
@@ -38,19 +38,19 @@ std::string timeToStr()
     return msg.str();
 }
 
-class WaypointSaver
+class CirkitWaypointSaver
 {
 public:
-  WaypointSaver(const std::string& waypoints_file):
+  CirkitWaypointSaver(const std::string& waypoints_file):
     waypoints_file_(waypoints_file), saved_waypoints_(false)
   {
     ros::NodeHandle n;
     
-    waypoints_sub_ = n.subscribe("/waypoints", 1, &WaypointSaver::waypointsCallback, this);
+    waypoints_sub_ = n.subscribe("/waypoints", 1, &CirkitWaypointSaver::waypointsCallback, this);
     ROS_INFO("Waiting for waypoints");
   }
 
-  void waypointsCallback(waypoint_manager_msgs::WaypointArray waypoints)
+  void waypointsCallback(cirkit_waypoint_manager_msgs::WaypointArray waypoints)
   {
     ROS_INFO("Received waypoints : %d", (int)waypoints.waypoints.size());
 
@@ -84,7 +84,7 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "waypoint_saver");
   std::string waypoints_name = timeToStr() + ".csv";
   
-  WaypointSaver saver(waypoints_name);
+  CirkitWaypointSaver saver(waypoints_name);
   while(!saver.saved_waypoints_ && ros::ok())
   {
     ros::spinOnce();

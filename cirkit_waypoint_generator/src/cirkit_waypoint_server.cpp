@@ -23,10 +23,10 @@ using namespace visualization_msgs;
 typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 
 
-class WaypointServer
+class CirkitWaypointServer
 {
 public:
-  WaypointServer():
+  CirkitWaypointServer():
     rate_(5)
   {
     ros::NodeHandle n("~");
@@ -110,7 +110,7 @@ public:
   
   void run()
   {
-    ros::Timer frame_timer = nh_.createTimer(ros::Duration(0.1), boost::bind(&WaypointServer::publishWaypointCallback, this, _1));
+    ros::Timer frame_timer = nh_.createTimer(ros::Duration(0.1), boost::bind(&CirkitWaypointServer::publishWaypointCallback, this, _1));
    
     while(ros::ok())
     {
@@ -132,7 +132,7 @@ private:
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "waypoint_server");
-  WaypointServer waypoint_server;
+  CirkitWaypointServer waypoint_server;
 
   boost::program_options::options_description desc("Options");
   desc.add_options()

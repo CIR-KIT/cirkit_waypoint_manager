@@ -6,7 +6,7 @@
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <visualization_msgs/MarkerArray.h>
-#include <waypoint_manager_msgs/WaypointArray.h>
+#include <cirkit_waypoint_manager_msgs/WaypointArray.h>
 
 #include <math.h>
 #include <string>
@@ -26,10 +26,10 @@ boost::shared_ptr<interactive_markers::InteractiveMarkerServer> server;
 
 
 
-class WaypointGenerator
+class CirkitWaypointGenerator
 {
 public:
-  WaypointGenerator():
+  CirkitWaypointGenerator():
     rate_(5)
   {
     ros::NodeHandle n("~");
@@ -37,10 +37,10 @@ public:
     n.param("yaw_th", yaw_th_, 45.0*3.1415/180.0); // yaw threshold [rad]
     odom_sub_ = nh_.subscribe<geometry_msgs::PoseWithCovarianceStamped>("/amcl_pose",
                               1,
-                              &WaypointGenerator::addWaypoint, this);
-    clicked_sub_ = nh_.subscribe("clicked_point", 1, &WaypointGenerator::clickedPointCallback, this);
+                              &CirkitWaypointGenerator::addWaypoint, this);
+    clicked_sub_ = nh_.subscribe("clicked_point", 1, &CirkitWaypointGenerator::clickedPointCallback, this);
     reach_marker_pub_ = nh_.advertise<visualization_msgs::MarkerArray>("/reach_threshold_markers", 1);
-    waypoints_pub_ = nh_.advertise<waypoint_manager_msgs::WaypointArray>("/waypoints", 1);
+    waypoints_pub_ = nh_.advertise<cirkit_waypoint_manager_msgs::WaypointArray>("/waypoints", 1);
     waypoint_box_count_ = 0;
     server.reset( new interactive_markers::InteractiveMarkerServer("cube") );
   }
@@ -195,10 +195,10 @@ public:
     makeWaypointMarkerControl(int_marker, is_searching_area);
 
     server->insert(int_marker);
-    server->setCallback(int_marker.name, boost::bind(&WaypointGenerator::processFeedback, this, _1));
+    server->setCallback(int_marker.name, boost::bind(&CirkitWaypointGenerator::processFeedback, this, _1));
     server->applyChanges();
 
-    waypoint_manager_msgs::Waypoint waypoint;
+    cirkit_waypoint_manager_msgs::Waypoint waypoint;
     waypoint.number = waypoint_box_count_;
     waypoint.pose = new_pose.pose;
     waypoint.is_search_area = is_searching_area;
@@ -256,8 +256,8 @@ public:
   
   void run()
   {
-    ros::Timer frame_timer = nh_.createTimer(ros::Duration(0.1), boost::bind(&WaypointGenerator::publishWaypointCallback, this, _1));
-    ros::Timer tf_frame_timer = nh_.createTimer(ros::Duration(0.1), boost::bind(&WaypointGenerator::tfSendTransformCallback, this, _1));
+    ros::Timer frame_timer = nh_.createTimer(ros::Duration(0.1), boost::bind(&CirkitWaypointGenerator::publishWaypointCallback, this, _1));
+    ros::Timer tf_frame_timer = nh_.createTimer(ros::Duration(0.1), boost::bind(&CirkitWaypointGenerator::tfSendTransformCallback, this, _1));
     while(ros::ok())
     {
       ros::spinOnce();
@@ -272,7 +272,7 @@ private:
   ros::Publisher reach_marker_pub_;
   ros::Publisher waypoints_pub_;
   geometry_msgs::PoseWithCovariance last_pose_;
-  waypoint_manager_msgs::WaypointArray waypoints_;
+  cirkit_waypoint_manager_msgs::WaypointArray waypoints_;
   double dist_th_;
   double yaw_th_;
   int waypoint_box_count_;
@@ -286,7 +286,7 @@ private:
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "waypoint_generator");
-  WaypointGenerator generator;
+  CirkitWaypointGenerator generator;
 
   boost::program_options::options_description desc("Options");
   desc.add_options()
