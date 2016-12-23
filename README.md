@@ -1,4 +1,4 @@
-# waypoint_manager [![Build Status](https://travis-ci.org/CIR-KIT/cirkit_waypoint_manager.svg?branch=indigo-devel)](https://travis-ci.org/CIR-KIT/waypoint_manager) [![Slack](https://img.shields.io/badge/Slack-CIR--KIT-blue.svg)](http://cir-kit.slack.com/messages/waypoint_manager)
+# cirkit_waypoint_manager [![Build Status](https://travis-ci.org/CIR-KIT/cirkit_waypoint_manager.svg?branch=indigo-devel)](https://travis-ci.org/CIR-KIT/cirkit_waypoint_manager) [![Slack](https://img.shields.io/badge/Slack-CIR--KIT-blue.svg)](http://cir-kit.slack.com/messages/cirkit_waypoint_manager)
 Waypoint management package for move_base
 Supported ROS version is **Indigo**.
 
@@ -8,13 +8,13 @@ Supported ROS version is **Indigo**.
 ##### 2. Clone this repository.
 ```bash
 $ cd <catkin_ws>/src
-$ git clone https://github.com/CIR-KIT/waypoint_manager.git
+$ git clone https://github.com/CIR-KIT/cirkit_waypoint_manager.git
 ```
 ##### 3. Download required packages by wstool.
 ```bash
 $ cd <catkin_ws>
 $ wstool init src
-$ wstool merge -t src src/waypoint_manager/waypoint_manager.rosinstall
+$ wstool merge -t src src/cirkit_waypoint_manager/cirkit_waypoint_manager.rosinstall
 $ wstool update -t src
 ```
 ##### 4. Download depended packages by rosdep.
