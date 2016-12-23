@@ -16,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(Boost 1.4 COMPONENTS program_options REQUIRED)
 
 catkin_package(
-  CATKIN_DEPENDS roscpp geometry_msgs interactive_markers nav_msgs roscpp std_msgs tf visualization_msgs cirkit_waypoint_manager_msgs
+  CATKIN_DEPENDS roscpp geometry_msgs interactive_markers nav_msgs roscpp std_msgs tf visualization_msgs 
 )
 
 include_directories(
