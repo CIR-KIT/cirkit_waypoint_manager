@@ -13,7 +13,6 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
-  <depend>cirkit_waypoint_manager_msgs</depend>
   <depend>cmake_modules</depend>
   <depend>geometry_msgs</depend>
   <depend>interactive_markers</depend>
