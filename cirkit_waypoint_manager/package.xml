@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>waypoint_manager</name>
+  <name>cirkit_waypoint_manager</name>
   <version>0.1.0</version>
   <description>The metapackage for waypoint_manager.</description>
 
@@ -12,8 +12,8 @@
   <author email="cirkit.infomation@gmail.com">CIR-KIT</author>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <exec_depend>waypoint_genarator</exec_depend>
-  <exec_depend>waypoint_navigator</exec_depend>
+  <exec_depend>cirkit_waypoint_genarator</exec_depend>
+  <exec_depend>cirkit_waypoint_navigator</exec_depend>
 
   <export>
     <metapackage/>
