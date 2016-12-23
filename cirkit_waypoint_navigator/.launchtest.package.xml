@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>cirkit_waypoint_navigator</name>
+  <version>0.1.0</version>
+  <description>The waypoint_navigator package</description>
+
+  <maintainer email="k104009y@mail.kyutech.jp">Ariyu</maintainer>
+  <maintainer email="o111027y@mail.kyutech.jp">Doi Yusuke</maintainer>
+  <license>BSD</license>
+
+  <url type="repository">https://github.com/CIR-KIT/waypoint_manager.git</url>
+  <url type="bugtracker">https://github.com/CIR-KIT/waypoint_manager/issues</url>
+  <author email="cirkit.infomation@gmail.com">CIR-KIT</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>actionlib</depend>
+  <depend>geometry_msgs</depend>
+  <depend>jsk_recognition_msgs</depend>
+  <depend>laser_geometry</depend>
+  <depend>message_generation</depend>
+  <depend>message_runtime</depend>
+  <depend>move_base_msgs</depend>
+  <depend>roslib</depend>
+  <depend>sensor_msgs</depend>
+  <depend>tf</depend>
+  <depend>visualization_msgs</depend>
+  <exec_depend>cirkit_waypoint_generator</exec_depend> <!-- this is fo launch test -->
+  <!-- Use test_depend for packages you need only for testing: -->
+  <!--   <test_depend>gtest</test_depend> -->
+
+  <export>
+  </export>
+</package>

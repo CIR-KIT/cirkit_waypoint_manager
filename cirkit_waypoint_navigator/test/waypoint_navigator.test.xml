@@ -1,0 +1,5 @@
+<launch>
+  <include file="$(find waypoint_navigator)/launch/waypoint_navigator.launch">
+    <arg name="waypoint_filename" value="$(find waypoint_navigator)/waypoints/2016-11-06-11-32-09.csv"/>
+  </include>
+</launch>

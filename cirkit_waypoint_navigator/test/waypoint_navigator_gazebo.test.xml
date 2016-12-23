@@ -1,0 +1,5 @@
+<launch>
+  <include file="$(find waypoint_navigator)/launch/waypoint_navigator_gazebo.launch">
+    <arg name="waypoint_filename" value="$(find waypoint_navigator)/waypoints/gazebo_waypoints.csv"/>
+  </include>
+</launch>

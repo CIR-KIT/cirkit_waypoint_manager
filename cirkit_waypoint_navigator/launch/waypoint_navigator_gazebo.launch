@@ -1,0 +1,7 @@
+<launch>
+  <arg name="waypoint_filename" default="$(find waypoint_navigator)/waypoints/gazebo_waypoints.csv" />
+  <node name="waypoint_navigator_node" pkg="waypoint_navigator" type="waypoint_navigator_node" output="screen">
+    <param name="waypointsfile" value="$(arg waypoint_filename)"/>
+  </node>
+  <node pkg="waypoint_generator" name="waypoint_server" type="waypoint_server" args="--load $(arg waypoint_filename)" output="screen"/>
+</launch>
