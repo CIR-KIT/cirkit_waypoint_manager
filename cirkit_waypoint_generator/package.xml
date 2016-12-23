@@ -13,6 +13,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
+  <depend>cirkit_waypoint_manager_msgs</depend>
   <depend>cmake_modules</depend>
   <depend>geometry_msgs</depend>
   <depend>interactive_markers</depend>
@@ -22,7 +23,4 @@
   <depend>visualization_msgs</depend>
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
-
-  <export>
-  </export>
 </package>
