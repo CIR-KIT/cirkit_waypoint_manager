@@ -3,6 +3,9 @@ pwd
 rosdep install -i -r -y --from-paths . --ignore-src --rosdistro indigo
 
 cd ..		
-catkin_make --pkg cirkit_waypoint_manager_msgs
+catkin_make
 source devel/setup.bash		
+catkin_make
+source devel/setup.bash		
+rm -rf build/ 
 cd src
