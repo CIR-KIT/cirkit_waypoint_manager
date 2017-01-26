@@ -36,5 +36,5 @@ add_dependencies(cirkit_waypoint_saver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${cat
 target_link_libraries(cirkit_waypoint_saver ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
 
 add_executable(cirkit_waypoint_server src/cirkit_waypoint_server.cpp)
-add_dependencies(cirkit_waypoint_server ${catkin_EXPORTED_TARGETS})
+add_dependencies(cirkit_waypoint_server cirkit_waypoint_manager_msgs_generate_messages_cpp ${catkin_EXPORTED_TARGETS})
 target_link_libraries(cirkit_waypoint_server ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
