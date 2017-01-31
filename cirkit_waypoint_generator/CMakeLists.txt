@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   visualization_msgs
+  cirkit_waypoint_manager_msgs
 )
 
 find_package(Boost 1.4 COMPONENTS program_options REQUIRED)
