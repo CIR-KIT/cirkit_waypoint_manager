@@ -4,6 +4,7 @@ project(cirkit_waypoint_generator)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   cmake_modules
+  cirkit_waypoint_manager_msgs
   geometry_msgs
   interactive_markers
   nav_msgs
@@ -11,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   visualization_msgs
-  cirkit_waypoint_manager_msgs
 )
 
 find_package(Boost 1.4 COMPONENTS program_options REQUIRED)
@@ -29,11 +29,11 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 ## Declare a C++ executable
 add_executable(cirkit_waypoint_generator src/cirkit_waypoint_generator.cpp)
-add_dependencies(cirkit_waypoint_generator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(cirkit_waypoint_generator ${catkin_EXPORTED_TARGETS})
 target_link_libraries(cirkit_waypoint_generator ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
 
 add_executable(cirkit_waypoint_saver src/cirkit_waypoint_saver.cpp)
-add_dependencies(cirkit_waypoint_saver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(cirkit_waypoint_saver ${catkin_EXPORTED_TARGETS})
 target_link_libraries(cirkit_waypoint_saver ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
 
 add_executable(cirkit_waypoint_server src/cirkit_waypoint_server.cpp)
