@@ -1,7 +1,10 @@
 <launch>
-  <arg name="waypoint_filename" default="$(find waypoint_navigator)/waypoints/2016-11-06-11-32-09.csv" />
-  <node name="waypoint_navigator_node" pkg="waypoint_navigator" type="waypoint_navigator_node" output="screen">
+
+  <arg name="waypoint_filename" default="$(find cirkit_waypoint_navigator)/waypoints/2017-01-26-13-15-09.csv" />
+
+  <node name="cirkit_waypoint_navigator_node" pkg="cirkit_waypoint_navigator" type="cirkit_waypoint_navigator_node" output="screen">
     <param name="waypointsfile" value="$(arg waypoint_filename)" />
   </node>
-  <node pkg="waypoint_generator" name="waypoint_server" type="waypoint_server" args="--load $(arg waypoint_filename)" output="screen"/>
+
+  <node pkg="cirkit_waypoint_generator" name="cirkit_waypoint_server" type="cirkit_waypoint_server" args="--load $(arg waypoint_filename)" output="screen"/>
 </launch>
