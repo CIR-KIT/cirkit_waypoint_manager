@@ -70,7 +70,6 @@ public:
   : ac_("move_base", true),
     rate_(10)
   {
-    target_waypoint_index_ = 0;
     robot_behavior_state_ = RobotBehaviors::INIT_NAV;
     std::string filename;
 
@@ -81,6 +80,7 @@ public:
 
     n.param("dist_thres_to_target_object", dist_thres_to_target_object_, 1.8);
     n.param("limit_of_approach_to_target", limit_of_approach_to_target_, 5);
+    n.param("start_waypoint", target_waypoint_index_, 0);
     
     ROS_INFO("[Waypoints file name] : %s", filename.c_str());
     detect_target_objects_sub_ = nh_.subscribe("/recognized_result", 1, &CirkitWaypointNavigator::detectTargetObjectCallback, this);
@@ -392,7 +392,7 @@ public:
         delta_distance_to_goal = last_distance_to_goal - distance_to_goal; // どれだけ進んだか
         if (delta_distance_to_goal < 0.1) { // 進んだ距離が0.1[m]より小さくて
           ros::Duration how_long_stay_time = ros::Time::now() - begin_navigation;
-          if (how_long_stay_time.toSec() > 90.0 ) { // 90秒間経過していたら
+          if (how_long_stay_time.toSec() > 10.0 ) { // 90秒間経過していたら
             if (robot_behavior_state_ == RobotBehaviors::WAYPOINT_NAV) {
               robot_behavior_state_ = RobotBehaviors::WAYPOINT_NAV_PLANNING_ABORTED; // プランニング失敗とする
               break;
