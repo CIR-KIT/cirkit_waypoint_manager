@@ -57,10 +57,24 @@ target_link_libraries(cirkit_waypoint_navigator_node
   ${catkin_LIBRARIES}
 )
 
+#############
+## Install ##
+#############
+install(TARGETS cirkit_waypoint_navigator_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
+install(DIRECTORY include
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+foreach(dir launch waypoints waypoints/ekiden_final/first waypoints/ekiden_final/second)
+  install(DIRECTORY ${dir}/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir})
+endforeach(dir)
+
 ##########
 ## Test ##
 ##########
-# for launch test
-#find_package(roslaunch)
-#roslaunch_add_file_check(test/cirkit_waypoint_navigator.test.xml)
-#roslaunch_add_file_check(test/cirkit_waypoint_navigator_gazebo.test.xml)
+if (CATKIN_ENABLE_TESTING)
+  find_package(roslaunch REQUIRED)
+  roslaunch_add_file_check(launch)
+endif()
