@@ -4,7 +4,7 @@ project(cirkit_waypoint_generator)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   cmake_modules
-  #cirkit_waypoint_manager_msgs
+  cirkit_waypoint_manager_msgs
   geometry_msgs
   interactive_markers
   nav_msgs
