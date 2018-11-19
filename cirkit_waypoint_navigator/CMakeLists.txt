@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.8.3)
 project(cirkit_waypoint_navigator)
 
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
   actionlib
   geometry_msgs
   jsk_recognition_msgs
@@ -10,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   move_base_msgs
   roslib
+  roscpp
   sensor_msgs
   tf
   visualization_msgs
@@ -31,7 +31,18 @@ generate_messages(
 
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp actionlib geometry_msgs jsk_recognition_msgs laser_geometry message_runtime move_base_msgs roslib sensor_msgs tf visualization_msgs
+  CATKIN_DEPENDS
+    actionlib
+    geometry_msgs
+    jsk_recognition_msgs
+    laser_geometry
+    message_runtime
+    move_base_msgs
+    roscpp
+    roslib
+    sensor_msgs
+    tf
+    visualization_msgs
   DEPENDS EIGEN
 )
 
