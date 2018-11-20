@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.8.3)
 project(cirkit_waypoint_navigator)
 
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
   actionlib
   geometry_msgs
   jsk_recognition_msgs
@@ -10,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   move_base_msgs
   roslib
+  roscpp
   sensor_msgs
   tf
   visualization_msgs
@@ -31,7 +31,18 @@ generate_messages(
 
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp actionlib geometry_msgs jsk_recognition_msgs laser_geometry message_runtime move_base_msgs roslib sensor_msgs tf visualization_msgs
+  CATKIN_DEPENDS
+    actionlib
+    geometry_msgs
+    jsk_recognition_msgs
+    laser_geometry
+    message_runtime
+    move_base_msgs
+    roscpp
+    roslib
+    sensor_msgs
+    tf
+    visualization_msgs
   DEPENDS EIGEN
 )
 
@@ -57,10 +68,24 @@ target_link_libraries(cirkit_waypoint_navigator_node
   ${catkin_LIBRARIES}
 )
 
+#############
+## Install ##
+#############
+install(TARGETS cirkit_waypoint_navigator_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
+install(DIRECTORY include
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+foreach(dir launch waypoints waypoints/ekiden_final/first waypoints/ekiden_final/second)
+  install(DIRECTORY ${dir}/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir})
+endforeach(dir)
+
 ##########
 ## Test ##
 ##########
-# for launch test
-#find_package(roslaunch)
-#roslaunch_add_file_check(test/cirkit_waypoint_navigator.test.xml)
-#roslaunch_add_file_check(test/cirkit_waypoint_navigator_gazebo.test.xml)
+if (CATKIN_ENABLE_TESTING)
+  find_package(roslaunch REQUIRED)
+  roslaunch_add_file_check(launch)
+endif()

@@ -17,7 +17,16 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(Boost 1.4 COMPONENTS program_options REQUIRED)
 
 catkin_package(
-  CATKIN_DEPENDS roscpp geometry_msgs interactive_markers nav_msgs roscpp std_msgs tf visualization_msgs 
+  CATKIN_DEPENDS
+    roscpp
+    geometry_msgs
+    interactive_markers
+    nav_msgs
+    roscpp
+    std_msgs
+    tf
+    visualization_msgs 
+  DEPENDS Boost
 )
 
 include_directories(
@@ -39,3 +48,14 @@ target_link_libraries(cirkit_waypoint_saver ${catkin_LIBRARIES} ${Boost_LIBRARIE
 add_executable(cirkit_waypoint_server src/cirkit_waypoint_server.cpp)
 add_dependencies(cirkit_waypoint_server ${catkin_EXPORTED_TARGETS})
 target_link_libraries(cirkit_waypoint_server ${catkin_LIBRARIES} ${Boost_LIBRARIES} -lboost_program_options)
+
+# Install
+install(TARGETS cirkit_waypoint_generator
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
+install(TARGETS cirkit_waypoint_saver
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
+install(TARGETS cirkit_waypoint_server
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

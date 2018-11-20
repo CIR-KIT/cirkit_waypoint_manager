@@ -25,7 +25,9 @@
   <depend>sensor_msgs</depend>
   <depend>tf</depend>
   <depend>visualization_msgs</depend>
-  <!-- <exec_depend>cirkit_waypoint_generator</exec_depend> --> <!-- this is fo launch test -->
+
+  <test_depend>cirkit_waypoint_generator</test_depend>
+
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
 </package>
